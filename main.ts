@@ -107,7 +107,7 @@ namespace mecanumRobotV2 {
 
 
     /**
-     * set speed of motor
+     * Motor Geschwindigkeit einstellen
      */
     //% block="Motor $M läuft $D mit Geschwindigkeit: $speed \\%"
     //% speed.min=0 speed.max=100
@@ -161,7 +161,7 @@ namespace mecanumRobotV2 {
 
 
     /**
-     * set cat state
+     * Motor stoppen
      */
     //% block="Auto anhalten"
     //% group="Motor" weight=98
@@ -183,7 +183,7 @@ namespace mecanumRobotV2 {
 
 
     /**
-     * turn off all rgb-led
+     * Lichter ein-/auschalten
      */
     //% block="$LedC LED $LedS"
     //% group="led" weight=76
@@ -200,7 +200,9 @@ namespace mecanumRobotV2 {
 
 
 
-
+    /**
+    * Linienverfolgung
+    */
     /////////////////////////////////////////////////////
     //% block="$LT_val Linie verfolgen"
     //% group="Sensor" weight=69
