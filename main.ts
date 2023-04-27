@@ -163,7 +163,7 @@ namespace mecanumRobotV2 {
     /**
      * set cat state
      */
-    //% block="car Stop"
+    //% block="Auto anhalten"
     //% group="Motor" weight=98
     export function state() {
         //if (!PCA9685_Initialized) {
@@ -185,13 +185,13 @@ namespace mecanumRobotV2 {
     /**
      * turn off all rgb-led
      */
-    //% block="$LedC Colorful LED turn $LedS"
+    //% block="$LedC LED $LedS"
     //% group="led" weight=76
     export function setLed(LedC: LedCount, LedS: LedState) {
         i2cWrite(0x30, LedC, LedS);
     }
 
-    //% block="set servo to angle %angle"
+    //% block="Server auf Winkel %angle einstellen"
     //% group="Servo" weight=70
     //% angle.min=-90 angle.max.max=90
     export function setServo(angle: number): void {
@@ -202,7 +202,7 @@ namespace mecanumRobotV2 {
 
 
     /////////////////////////////////////////////////////
-    //% block="$LT_val LineTracking"
+    //% block="$LT_val Linie verfolgen"
     //% group="Sensor" weight=69
     export function LineTracking(LT_val: LT) {
         let val = 0;
@@ -227,7 +227,7 @@ namespace mecanumRobotV2 {
      * Ultrasonic sensor
      */
     let lastTime = 0;
-    //% block="Ultrasonic"
+    //% block="Ultraschallsensor"
     //% group="Sensor" weight=68
     export function ultra(): number {
         //send trig pulse
