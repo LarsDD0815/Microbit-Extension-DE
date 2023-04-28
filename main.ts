@@ -53,7 +53,9 @@ enum MotorState {
     brake = 1
 }
 enum MD {
+    //% block="vorwärts"
     Forward = 0,
+    //% block="rückwärts"
     Back = 1
 }
 
