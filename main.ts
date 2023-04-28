@@ -2,54 +2,69 @@
  * use for RGB-LED
  */
 enum COLOR {
+    //% block=rot
     red,
+    //% block=grün
     green,
+    //% block=blau
     blue,
+    //% block=weiß
     white,
+    //% block=schwarz
     black
 }
 /**
   * Pre-Defined LED colours
   */
 enum vColors {
-    //% block=red
+    //% block=rot
     Red = 0xff0000,
     //% block=orange
     Orange = 0xffa500,
-    //% block=yellow
+    //% block=gelb
     Yellow = 0xffff00,
-    //% block=green
+    //% block=grün
     Green = 0x00ff00,
-    //% block=blue
+    //% block=blau
     Blue = 0x0000ff,
     //% block=indigo
     Indigo = 0x4b0082,
-    //% block=violet
+    //% block=violett
     Violet = 0x8a2be2,
-    //% block=purple
+    //% block=lila
     Purple = 0xff00ff,
-    //% block=white
+    //% block=weiß
     White = 0xffffff,
-    //% block=black
+    //% block=schwarz
     Black = 0x000000
 }
 /**
  * use for control motor
  */
 enum DIR {
+    //% block="vorwärts"
     Run_forward = 0,
+    //% block="rückwärts"
     Run_back = 1,
+    //% block="nach links"
     Turn_Left = 2,
+    //% block="nach rechts"
     Turn_Right = 3
 }
 enum LR {
+    //% block="vorne links"
     Upper_left = 0,
+    //% block="hinten links"
     Lower_left = 1,
+    //% block="vorne rechts"
     Upper_right = 2,
+    //% block="hinten rechts"
     Lower_right = 3,
 }
 enum MotorState {
+    //% block=stop
     stop = 0,
+    //% block=start
     brake = 1
 }
 enum MD {
@@ -60,19 +75,26 @@ enum MD {
 }
 
 enum LT {
+    //% block="links"
     Left,
+    //% block="mitte"
     Center,
+    //% block="rechts"
     Right
     
 }
 
 enum LedCount {
+    //% block="links"
     Left = 0x09,
+    //% block="rechts"
     Right = 0x0a
 }
 
 enum LedState {
+    //% block="an"
     ON = 4095,
+    //% block="aus"
     OFF = 0
 }
 
@@ -94,12 +116,6 @@ namespace mecanumRobotV2 {
 
     const STC15_ADDRESS = 0x30;   //device address
 
-    // function i2cRead(addr: number, reg: number) {
-    //     pins.i2cWriteNumber(addr, reg, NumberFormat.UInt8BE);
-    //     let val = pins.i2cReadNumber(addr, NumberFormat.UInt8BE);
-    //     return val;
-    // }
-
     function i2cWrite(STC15_ADDRESS: number, reg: number, value: number) {
         let buf = pins.createBuffer(2)
         buf[0] = reg
@@ -115,9 +131,7 @@ namespace mecanumRobotV2 {
     //% speed.min=0 speed.max=100
     //% group="Motor" weight=97
     export function Motor(M: LR, D: MD, speed: number) {
-        // if (!PCA9685_Initialized) {
-        //     init_PCA9685();
-        // }
+
         let speed_value = Math.map(speed, 0, 100, 0, 255);
         //电机1
         //正转
@@ -193,6 +207,9 @@ namespace mecanumRobotV2 {
         i2cWrite(0x30, LedC, LedS);
     }
 
+    /**
+    * Server einstellen
+    */
     //% block="Server auf Winkel %angle einstellen"
     //% group="Servo" weight=70
     //% angle.min=-90 angle.max.max=90
@@ -228,7 +245,7 @@ namespace mecanumRobotV2 {
         return val;
     }
     /**
-     * Ultrasonic sensor
+     * Ultraschallsensor
      */
     let lastTime = 0;
     //% block="Ultraschallsensor"
