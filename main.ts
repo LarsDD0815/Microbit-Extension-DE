@@ -84,7 +84,7 @@ enum LT {
     
 }
 
-enum LedCount {
+enum LEDID {
     //% block="links"
     Left = 0x09,
     //% block="rechts"
@@ -127,7 +127,79 @@ namespace mecanumRobotV2 {
     /**
      * Motor Geschwindigkeit einstellen
      */
-    //% block="Motor $M läuft $D mit Geschwindigkeit: $speed \\%"
+    //% block="Vorne Links $D mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=97
+    export function MotorVorneLinks(M: LR, D: MD, speed: number) {
+
+        let speed_value = Math.map(speed, 0, 100, 0, 255);
+        if (D == 0) {
+            i2cWrite(0x30, 0x03, 0); //M2A
+            i2cWrite(0x30, 0x04, speed_value); //M2B
+        } else if (D == 1) {
+            i2cWrite(0x30, 0x03, speed_value); //M2A
+            i2cWrite(0x30, 0x04, 0); //M2B
+        }
+    }
+
+    /**
+     * Motor Geschwindigkeit einstellen
+     */
+    //% block="Vorne Rechts $D mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=97
+    export function MotorVorneRechts(M: LR, D: MD, speed: number) {
+
+        let speed_value = Math.map(speed, 0, 100, 0, 255);
+        if (D == 0) {
+            i2cWrite(0x30, 0x03, 0); //M2A
+            i2cWrite(0x30, 0x04, speed_value); //M2B
+        } else if (D == 1) {
+            i2cWrite(0x30, 0x03, speed_value); //M2A
+            i2cWrite(0x30, 0x04, 0); //M2B
+        }
+    }
+
+    /**
+     * Motor Geschwindigkeit einstellen
+     */
+    //% block="Vorne Rechts $D mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=97
+    export function MotorHintenLinks(M: LR, D: MD, speed: number) {
+
+        let speed_value = Math.map(speed, 0, 100, 0, 255);
+        if (D == 0) {
+            i2cWrite(0x30, 0x07, 0); //M2A
+            i2cWrite(0x30, 0x08, speed_value); //M2B
+        } else if (D == 1) {
+            i2cWrite(0x30, 0x07, speed_value); //M2A
+            i2cWrite(0x30, 0x08, 0); //M2B
+        }
+    }
+
+    /**
+     * Motor Geschwindigkeit einstellen
+     */
+    //% block="Vorne Rechts $D mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=97
+    export function MotorHintenRechts(M: LR, D: MD, speed: number) {
+
+        let speed_value = Math.map(speed, 0, 100, 0, 255);
+        if (D == 0) {
+            i2cWrite(0x30, 0x05, 0); //M2A
+            i2cWrite(0x30, 0x06, speed_value); //M2B
+        } else if (D == 1) {
+            i2cWrite(0x30, 0x05, speed_value); //M2A
+            i2cWrite(0x30, 0x06, 0); //M2B
+        }
+    }
+
+    /**
+     * Motor Geschwindigkeit einstellen
+     */
+    //% block="Stelle Motor $M $D mit Geschwindigkeit: $speed \\%"
     //% speed.min=0 speed.max=100
     //% group="Motor" weight=97
     export function Motor(M: LR, D: MD, speed: number) {
@@ -201,14 +273,14 @@ namespace mecanumRobotV2 {
     /**
      * Lichter ein-/auschalten
      */
-    //% block="$LedC LED $LedS"
+    //% block="LED $LEDID $LedS"
     //% group="led" weight=76
-    export function setLed(LedC: LedCount, LedS: LedState) {
-        i2cWrite(0x30, LedC, LedS);
+    export function setLed(LEDID: LEDID, LedS: LedState) {
+        i2cWrite(0x30, LEDID, LedS);
     }
 
     /**
-    * Server einstellen
+    * Servo einstellen
     */
     //% block="Server auf Winkel %angle einstellen"
     //% group="Servo" weight=70
@@ -216,7 +288,6 @@ namespace mecanumRobotV2 {
     export function setServo(angle: number): void {
         pins.servoWritePin(AnalogPin.P14, angle)
     }
-
 
 
     /**
