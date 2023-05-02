@@ -19,27 +19,11 @@ enum LED {
     //% block="rechts"
     Right = 0x0a
 }
-enum LEDColors {
-    //% block=red
-    Red = 0xff0000,
-    //% block=orange
-    Orange = 0xffa500,
-    //% block=yellow
-    Yellow = 0xffff00,
-    //% block=green
-    Green = 0x00ff00,
-    //% block=blue
-    Blue = 0x0000ff,
-    //% block=indigo
-    Indigo = 0x4b0082,
-    //% block=violet
-    Violet = 0x8a2be2,
-    //% block=purple
-    Purple = 0xff00ff,
-    //% block=white
-    White = 0xffffff,
-    //% block=black
-    Black = 0x000000
+enum LEDColor {
+    //% block=Regenbogen
+    Rainbow = 4095,
+    //% block=aus
+    Off = 0
 }
 
 //% color="#ff6800" icon="\uf1b9" weight=15
@@ -150,7 +134,7 @@ namespace mecanumRobotV2 {
 
     //% block="LED $led $ledColor"
     //% group="LED" weight=76
-    export function setLed(led: LED, ledColor: LEDColors) {
+    export function setLed(led: LED, ledColor: LEDColor) {
         i2cWrite(led, ledColor);
     }
 
