@@ -138,11 +138,11 @@ namespace mecanumRobotV2 {
         i2cWrite(LED, LedS);
     }
 
-    //% block="Server auf Winkel %angle einstellen"
+    //% block="Servo auf Winkel %angle einstellen"
     //% group="Servo" weight=70
     //% angle.min=-90 angle.max.max=90
     export function setServo(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle)
+        pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
 
     //% block="Liniensensor $LT_val"
