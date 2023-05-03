@@ -59,6 +59,28 @@ namespace mecanumRobotV2 {
         MotorHintenRechts(EngineRotationDirection.Back, speed);
     }
 
+    //% block="Rechts drehen mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=99
+    export function RechtsDrehen(speed: number) {
+
+        MotorVorneLinks(EngineRotationDirection.Forward, speed);
+        MotorVorneRechts(EngineRotationDirection.Back, -speed);
+        MotorHintenLinks(EngineRotationDirection.Forward, speed);
+        MotorHintenRechts(EngineRotationDirection.Back, -speed);
+    }
+
+    //% block="Links drehen mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
+    //% group="Motor" weight=99
+    export function RechtsLinks(speed: number) {
+
+        MotorVorneLinks(EngineRotationDirection.Back, -speed);
+        MotorVorneRechts(EngineRotationDirection.Forward, speed);
+        MotorHintenLinks(EngineRotationDirection.Back, -speed);
+        MotorHintenRechts(EngineRotationDirection.Forward, speed);
+    }
+
     //% block="anhalten"
     //% group="Motor" weight=98
     export function MotorenAnhalten() {
