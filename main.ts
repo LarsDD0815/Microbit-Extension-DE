@@ -37,7 +37,7 @@ namespace mecanumRobotV2 {
         pins.i2cWriteBuffer(0x30, buf)
     }
 
-    //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte \\%"
+    //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte"
     //% group="Motor" weight=95
     export function stelleMotorenPerBluetooth(bluetoothUARTWerte: String) {
 
