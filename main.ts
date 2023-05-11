@@ -56,7 +56,7 @@ namespace mecanumRobotV2 {
 
     function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
         
-        var speed = Math.map(Math.abs(motorwert), 0, 100, 0, 255);
+        let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 255);
 
         if (motorwert == 0) {
             i2cWrite(adresse1, 0);
