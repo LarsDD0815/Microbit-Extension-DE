@@ -39,7 +39,7 @@ namespace mecanumRobotV2 {
 
     //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte \\%"
     //% group="Motor" weight=95
-    export function MotorVorneRechts(bluetoothUARTWerte: String) {
+    export function stelleMotorenPerBluetooth(bluetoothUARTWerte: String) {
 
         let rohdaten = bluetoothUARTWerte.split("|");
         
@@ -54,7 +54,7 @@ namespace mecanumRobotV2 {
         stelleMotor(0x07, 0x08, motorHintenLinks);
     }
 
-    function stelleMotor(adresse1: number, adresse2: number motorwert: number) {
+    function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
         
         var speed = Math.map(Math.abs(motorwert), 0, 100, 0, 255);
 
