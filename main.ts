@@ -37,6 +37,39 @@ namespace mecanumRobotV2 {
         pins.i2cWriteBuffer(0x30, buf)
     }
 
+    //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte \\%"
+    //% group="Motor" weight=95
+    export function MotorVorneRechts(bluetoothUARTWerte: String) {
+
+        let rohdaten = bluetoothUARTWerte.split("|");
+        
+        let motorVorneRechts = rohdaten[0];
+        let motorVorneLinks = rohdaten[1];
+        let motorHintenRechts = rohdaten[2];
+        let motorHintenLinks = rohdaten[3];
+
+        stelleMotor(0x01, 0x02, motorVorneRechts)
+        stelleMotor(0x03, 0x04, motorVorneLinks)
+        stelleMotor(0x05, 0x06, motorHintenRechts)
+        stelleMotor(0x07, 0x08, motorHintenLinks)
+    }
+
+    function stelleMotor(adresse1: number, adresse2: number motorwert: number) {
+        
+        var speed = Math.map(Math.abs(motorwert), 0, 100, 0, 255);
+
+        if (motorwert == 0) {
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, 0);
+        } else if (motorwert > 0) {
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, speed);
+        } else {
+            i2cWrite(adresse1, speed);
+            i2cWrite(adresse2, 0);
+        }
+    }
+
     //% block="Vorwörts mit Geschwindigkeit: $speed \\%"
     //% speed.min=0 speed.max=100
     //% group="Motor" weight=100
