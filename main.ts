@@ -48,10 +48,10 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = rohdaten[2];
         let motorHintenLinks = rohdaten[3];
 
-        stelleMotor(0x01, 0x02, motorVorneRechts)
-        stelleMotor(0x03, 0x04, motorVorneLinks)
-        stelleMotor(0x05, 0x06, motorHintenRechts)
-        stelleMotor(0x07, 0x08, motorHintenLinks)
+        stelleMotor(0x01, 0x02, motorVorneRechts);
+        stelleMotor(0x03, 0x04, motorVorneLinks);
+        stelleMotor(0x05, 0x06, motorHintenRechts);
+        stelleMotor(0x07, 0x08, motorHintenLinks);
     }
 
     function stelleMotor(adresse1: number, adresse2: number motorwert: number) {
