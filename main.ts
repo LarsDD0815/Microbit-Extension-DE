@@ -43,7 +43,7 @@ namespace mecanumRobotV2 {
 
         let rohdaten = bluetoothUARTWerte.split("|");
         
-        let motorVorneRechts = parseInt(rohdaten[0]), 10;
+        let motorVorneRechts = parseInt(rohdaten[0], 10);
         let motorVorneLinks = parseInt(rohdaten[1], 10);
         let motorHintenRechts = parseInt(rohdaten[2], 10);
         let motorHintenLinks = parseInt(rohdaten[3], 10);
