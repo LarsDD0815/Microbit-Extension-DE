@@ -67,8 +67,8 @@ namespace mecanumRobotV2 {
             i2cWrite(adresse1, 0);
             i2cWrite(adresse2, speed);
         } else {
-            i2cWrite(adresse1, speed);
             i2cWrite(adresse2, 0);
+            i2cWrite(adresse1, speed);
         }
     }
 
