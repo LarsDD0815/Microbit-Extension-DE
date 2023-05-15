@@ -48,15 +48,17 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2]);
         let motorHintenLinks = parseInt(rohdaten[3]);
 
-        stelleMotor(0x01, 0x02, motorVorneRechts);
-        stelleMotor(0x03, 0x04, motorVorneLinks);
-        stelleMotor(0x05, 0x06, motorHintenRechts);
-        stelleMotor(0x07, 0x08, motorHintenLinks);
+        let abstandInZentimetern = ultra()
+
+        stelleMotor(0x01, 0x02, motorVorneRechts, abstandInZentimetern);
+        stelleMotor(0x03, 0x04, motorVorneLinks, abstandInZentimetern);
+        stelleMotor(0x05, 0x06, motorHintenRechts, abstandInZentimetern);
+        stelleMotor(0x07, 0x08, motorHintenLinks, abstandInZentimetern);
     }
 
-    function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
+    function stelleMotor(adresse1: number, adresse2: number, motorwert: number, abstandInZentimetern : number) {
         
-        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 254));
+        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, motorwert > 0 ? abstandInZentimetern : 255));
 
         if (motorwert == 0) {
             i2cWrite(adresse1, 0);
