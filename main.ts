@@ -50,6 +50,8 @@ namespace mecanumRobotV2 {
 
         let rohdaten = bluetoothUARTWerte.split("|");
         
+        serial.writeLine(bluetoothUARTWerte)
+
         let motorVorneRechts = parseInt(rohdaten[0], 10);
         let motorVorneLinks = parseInt(rohdaten[1], 10);
         let motorHintenRechts = parseInt(rohdaten[2], 10);
@@ -64,6 +66,8 @@ namespace mecanumRobotV2 {
     function stelleMotor(adresse1: number, adresse2: number, motorwert: number, repeat: boolean) {
         
         let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 254);
+
+        serial.writeline("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
 
         if (motorwert == 0) {
             i2cWrite2(adresse1, 0, repeat);
