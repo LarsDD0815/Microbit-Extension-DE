@@ -62,8 +62,8 @@ namespace mecanumRobotV2 {
         
         let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 254);
 
-        const index1 = buffer.length;
-        const index2 = index1 + 1;
+        let index1 = buffer.length;
+        let index2 = index1 + 1;
 
         if (motorwert == 0) {
             buffer[index1] = 0;
