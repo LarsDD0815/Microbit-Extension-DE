@@ -49,8 +49,8 @@ namespace mecanumRobotV2 {
         let motorHintenLinks = parseInt(rohdaten[3], 10);
 
         stelleMotor(0x01, 0x02, motorVorneRechts);
-        stelleMotor(0x03, 0x04, motorVorneLinks);
         stelleMotor(0x05, 0x06, motorHintenRechts);
+        stelleMotor(0x03, 0x04, motorVorneLinks);
         stelleMotor(0x07, 0x08, motorHintenLinks);
     }
 
