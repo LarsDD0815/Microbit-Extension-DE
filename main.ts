@@ -66,14 +66,14 @@ namespace mecanumRobotV2 {
         const index2 = index1 + 1;
 
         if (motorwert == 0) {
-            reg[index1] = 0;
-            reg[index2] = 0;
+            buffer[index1] = 0;
+            buffer[index2] = 0;
         } else if (motorwert > 0) {
-            reg[index1] = 0;
-            reg[index2] = speed;
+            buffer[index1] = 0;
+            buffer[index2] = speed;
         } else {
-            reg[index1] = speed;
-            reg[index2] = 0;
+            buffer[index1] = speed;
+            buffer[index2] = 0;
         }
     }
 
