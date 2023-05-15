@@ -56,7 +56,7 @@ namespace mecanumRobotV2 {
 
     function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
         
-        let speed = Math.abs(Math.map(Math.abs(motorwert), 0, 100, 0, 254));
+        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 254));
 
         serial.writeLine("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
 
