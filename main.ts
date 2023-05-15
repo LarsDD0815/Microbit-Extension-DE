@@ -55,7 +55,7 @@ namespace mecanumRobotV2 {
         stelleMotor(buffer, 0x05, 0x06, motorHintenRechts);
         stelleMotor(buffer, 0x07, 0x08, motorHintenLinks);
 
-        pins.i2cWriteBuffer(0x30, buf)
+        pins.i2cWriteBuffer(0x30, buffer)
     }
 
     function stelleMotor(buffer: Buffer, adresse1: number, adresse2: number, motorwert: number) {
