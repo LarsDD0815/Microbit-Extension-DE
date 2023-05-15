@@ -61,14 +61,14 @@ namespace mecanumRobotV2 {
         serial.writeLine("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
 
         if (motorwert == 0) {
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse1, 0));
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse2, 0));
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, 0);
         } else if (motorwert > 0) {
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse1, 0));
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse2, speed));
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, speed);
         } else {
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse1, speed));
-            serial.writeLine("" + adresse1 + " " + adresse2 + i2cWrite(adresse2, 0));
+            i2cWrite(adresse1, speed);
+            i2cWrite(adresse2, 0);
         }
     }
 
