@@ -34,7 +34,7 @@ namespace mecanumRobotV2 {
         let buf = pins.createBuffer(2)
         buf[0] = reg
         buf[1] = value
-        pins.i2cWriteBuffer(0x30, buf, repeat)
+        pins.i2cWriteBuffer(0x30, buf)
     }
 
     function i2cWrite2(reg: number, value: number, repeat: boolean) {
@@ -46,7 +46,7 @@ namespace mecanumRobotV2 {
 
     //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte"
     //% group="Motor" weight=95
-    export function stelleMotorenPerBluetooth(bluetoothUARTWerte: String) {
+    export function stelleMotorenPerBluetooth(bluetoothUARTWerte: string) {
 
         let rohdaten = bluetoothUARTWerte.split("|");
         
@@ -67,7 +67,7 @@ namespace mecanumRobotV2 {
         
         let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 254);
 
-        serial.writeline("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
+        serial.writeLine("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
 
         if (motorwert == 0) {
             i2cWrite2(adresse1, 0, repeat);
