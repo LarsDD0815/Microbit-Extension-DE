@@ -34,7 +34,14 @@ namespace mecanumRobotV2 {
         let buf = pins.createBuffer(2)
         buf[0] = reg
         buf[1] = value
-        pins.i2cWriteBuffer(0x30, buf)
+        pins.i2cWriteBuffer(0x30, buf, repeat)
+    }
+
+    function i2cWrite2(reg: number, value: number, repeat: boolean) {
+        let buf = pins.createBuffer(2)
+        buf[0] = reg
+        buf[1] = value
+        pins.i2cWriteBuffer(0x30, buf, repeat)
     }
 
     //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte"
@@ -48,25 +55,25 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2], 10);
         let motorHintenLinks = parseInt(rohdaten[3], 10);
 
-        stelleMotor(0x01, 0x02, motorVorneRechts);
-        stelleMotor(0x05, 0x06, motorHintenRechts);
-        stelleMotor(0x03, 0x04, motorVorneLinks);
-        stelleMotor(0x07, 0x08, motorHintenLinks);
+        stelleMotor(0x01, 0x02, motorVorneRechts, true);
+        stelleMotor(0x03, 0x04, motorVorneLinks, true);
+        stelleMotor(0x05, 0x06, motorHintenRechts, true);
+        stelleMotor(0x07, 0x08, motorHintenLinks, false);
     }
 
-    function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
+    function stelleMotor(adresse1: number, adresse2: number, motorwert: number, repeat: boolean) {
         
         let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 254);
 
         if (motorwert == 0) {
-            i2cWrite(adresse1, 0);
-            i2cWrite(adresse2, 0);
+            i2cWrite2(adresse1, 0, repeat);
+            i2cWrite2(adresse2, 0, repeat);
         } else if (motorwert > 0) {
-            i2cWrite(adresse1, 0);
-            i2cWrite(adresse2, speed);
+            i2cWrite2(adresse1, 0, repeat);
+            i2cWrite2(adresse2, speed, repeat);
         } else {
-            i2cWrite(adresse1, speed);
-            i2cWrite(adresse2, 0);
+            i2cWrite2(adresse1, speed, repeat);
+            i2cWrite2(adresse2, 0, repeat);
         }
     }
 
