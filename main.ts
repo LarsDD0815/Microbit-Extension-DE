@@ -48,7 +48,7 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2]);
         let motorHintenLinks = parseInt(rohdaten[3]);
 
-        let buf = pins.createBuffer(8)
+        let buffer = pins.createBuffer(8)
 
         stelleMotor(buffer, 0x01, 0x02, motorVorneRechts);
         stelleMotor(buffer, 0x03, 0x04, motorVorneLinks);
