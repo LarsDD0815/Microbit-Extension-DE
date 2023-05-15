@@ -56,18 +56,18 @@ namespace mecanumRobotV2 {
 
     function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
         
-        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 254));
+        let speed = Math.trunc(Math.map(Math.abs(motorwert+30), 0, 100, 0, 254));
 
         serial.writeLine("" + adresse1 + " " +adresse2 + " " + motorwert + " " + speed)
 
         if (motorwert == 0) {
-            //i2cWrite(adresse1, 0);
-            //i2cWrite(adresse2, 0);
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, 0);
         } else if (motorwert > 0) {
-            //i2cWrite(adresse1, 0);
-            //i2cWrite(adresse2, speed);
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, speed);
         } else {
-            //i2cWrite(adresse2, 0);
+            i2cWrite(adresse2, 0);
             i2cWrite(adresse1, speed);
         }
     }
