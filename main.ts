@@ -48,32 +48,25 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2]);
         let motorHintenLinks = parseInt(rohdaten[3]);
 
-        let buffer = pins.createBuffer(8)
-
-        stelleMotor(buffer, 0x01, 0x02, motorVorneRechts);
-        stelleMotor(buffer, 0x03, 0x04, motorVorneLinks);
-        stelleMotor(buffer, 0x05, 0x06, motorHintenRechts);
-        stelleMotor(buffer, 0x07, 0x08, motorHintenLinks);
-
-        pins.i2cWriteBuffer(0x30, buffer)
+        stelleMotor(0x01, 0x02, motorVorneRechts);
+        stelleMotor(0x03, 0x04, motorVorneLinks);
+        stelleMotor(0x05, 0x06, motorHintenRechts);
+        stelleMotor(0x07, 0x08, motorHintenLinks);
     }
 
-    function stelleMotor(buffer: Buffer, adresse1: number, adresse2: number, motorwert: number) {
+    function stelleMotor(adresse1: number, adresse2: number, motorwert: number) {
         
         let speed = Math.map(Math.abs(motorwert), 0, 100, 0, 254);
 
-        let index1 = buffer.length;
-        let index2 = index1 + 1;
-
         if (motorwert == 0) {
-            buffer[index1] = 0;
-            buffer[index2] = 0;
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, 0);
         } else if (motorwert > 0) {
-            buffer[index1] = 0;
-            buffer[index2] = speed;
+            i2cWrite(adresse1, 0);
+            i2cWrite(adresse2, speed);
         } else {
-            buffer[index1] = speed;
-            buffer[index2] = 0;
+            i2cWrite(adresse1, speed);
+            i2cWrite(adresse2, 0);
         }
     }
 
