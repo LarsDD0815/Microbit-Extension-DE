@@ -60,7 +60,7 @@ namespace mecanumRobotV2 {
         
         let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 255));
 
-        if (motorwert == 0 || (motorwert > 0 && (abstandInZentimetern < 10 || abstandInZentimetern > 1200)) {
+        if (motorwert == 0 || (motorwert > 0 && (abstandInZentimetern < 10 || abstandInZentimetern > 1200))) {
             i2cWrite(adresse1, 0);
             i2cWrite(adresse2, 0);
         } else if (motorwert > 0) {
