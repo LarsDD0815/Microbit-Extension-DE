@@ -58,9 +58,9 @@ namespace mecanumRobotV2 {
 
     function stelleMotor(adresse1: number, adresse2: number, motorwert: number, abstandInZentimetern : number) {
         
-        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, (motorwert > 0 ? abstandInZentimetern : 255)));
+        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 255));
 
-        if (motorwert == 0) {
+        if (motorwert == 0 || abstandInZentimetern < 10) {
             i2cWrite(adresse1, 0);
             i2cWrite(adresse2, 0);
         } else if (motorwert > 0) {
