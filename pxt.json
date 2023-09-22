@@ -1,7 +1,7 @@
 {
-    "name": "Microbit-Bluetooth",
+    "name": "Microbit-Extension-DE",
     "version": "1.0.0",
-    "description": "Microbit mit Bluetooth-Controller",
+    "description": "Microbit-Erweiterungen",
     "dependencies": {
         "core": "*",
         "neopixel": "github:mworkfun/pxt-neopixel-bluetooth",
