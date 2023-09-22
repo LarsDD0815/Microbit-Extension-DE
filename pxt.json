@@ -3,9 +3,7 @@
     "version": "1.0.0",
     "description": "Microbit-Erweiterungen",
     "dependencies": {
-        "core": "*",
-        "neopixel": "github:mworkfun/pxt-neopixel-bluetooth",
-        "microphone": "*"
+        "core": "*"
     },
     "files": [
         "README.md",
