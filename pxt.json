@@ -5,8 +5,7 @@
     "dependencies": {
         "core": "*",
         "neopixel": "github:mworkfun/pxt-neopixel-bluetooth",
-        "microphone": "*",
-        "bluetooth": "*"
+        "microphone": "*"
     },
     "files": [
         "README.md",
