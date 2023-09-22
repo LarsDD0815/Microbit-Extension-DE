@@ -1,7 +1,7 @@
 {
-    "name": "pxt-mecanum-robot-V2_DE",
+    "name": "Microbit-Bluetooth",
     "version": "1.0.0",
-    "description": "keyestudio mecanum robot V2 for microbit - Deutsch",
+    "description": "Microbit mit Bluetooth-Controller",
     "dependencies": {
         "core": "*",
         "neopixel": "github:mworkfun/pxt-neopixel-bluetooth",
