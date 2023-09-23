@@ -77,11 +77,11 @@ namespace mecanumRobotV2 {
 
         if (distanceInCentimeters > 1200) {
             return 0;
-        } else if (distanceInCentimeters > 40) {
+        } else if (distanceInCentimeters > 50) {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 10, 40, 0, 50);
+        return Math.map(distanceInCentimeters, 15, 50, 0, 45);
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
