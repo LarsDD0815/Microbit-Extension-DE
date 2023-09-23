@@ -75,7 +75,7 @@ namespace mecanumRobotV2 {
 
     function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
 
-        if (distanceInCentimeters > 1200 || distanceInCentimeters < 10) {
+        if (distanceInCentimeters < 10) {
             return 0;
         } else if (distanceInCentimeters > 50) {
             return targetSpeed;
@@ -259,7 +259,9 @@ namespace mecanumRobotV2 {
         }
         lastTime = t;
 
-        return Math.round(ret / 58);
+        let distanceInCentimeters = Math.round(ret / 58);
+
+        return distanceInCentimeters > 1200 ? 0 : distanceInCentimeters;
     }
 
 }
