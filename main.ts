@@ -75,13 +75,13 @@ namespace mecanumRobotV2 {
 
     function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
 
-        if (distanceInCentimeters > 1200) {
+        if (distanceInCentimeters > 1200 || distanceInCentimeters < 10) {
             return 0;
         } else if (distanceInCentimeters > 50) {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 15, 50, 0, 45);
+        return Math.map(distanceInCentimeters, 10, 50, 0, 35);
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
