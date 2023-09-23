@@ -79,7 +79,7 @@ namespace mecanumRobotV2 {
 
         let abstandInZentimetern = ultra();
 
-        if (abstandInZentimetern < 10 || abstandInZentimetern > 1200)) {
+        if (abstandInZentimetern < 10 || abstandInZentimetern > 1200) {
             MotorenAnhalten();
         }
             
