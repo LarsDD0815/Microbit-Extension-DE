@@ -261,7 +261,7 @@ namespace mecanumRobotV2 {
 
         let distanceInCentimeters = Math.round(ret / 58);
 
-        return distanceInCentimeters > 1200 ? 0 : distanceInCentimeters;
+        return distanceInCentimeters > 600 ? 0 : distanceInCentimeters;
     }
 
 }
