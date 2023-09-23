@@ -77,6 +77,12 @@ namespace mecanumRobotV2 {
     //% group="Motor" weight=100
     export function MotorenVorwärts(speed: number) {
 
+        let abstandInZentimetern = ultra();
+
+        if (abstandInZentimetern < 10 || abstandInZentimetern > 1200)) {
+            MotorenAnhalten();
+        }
+            
         MotorVorneLinks(EngineRotationDirection.Forward, speed);
         MotorVorneRechts(EngineRotationDirection.Forward, speed);
         MotorHintenLinks(EngineRotationDirection.Forward, speed);
