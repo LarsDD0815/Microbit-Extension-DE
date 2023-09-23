@@ -48,46 +48,58 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2]);
         let motorHintenLinks = parseInt(rohdaten[3]);
 
-        let abstandInZentimetern = ultra();
+        let distanceInCentimeters = ultra();
 
-        stelleMotor(0x01, 0x02, motorVorneRechts, abstandInZentimetern);
-        stelleMotor(0x03, 0x04, motorVorneLinks, abstandInZentimetern);
-        stelleMotor(0x05, 0x06, motorHintenRechts, abstandInZentimetern);
-        stelleMotor(0x07, 0x08, motorHintenLinks, abstandInZentimetern);
+        stelleMotor(0x01, 0x02, motorVorneRechts, distanceInCentimeters);
+        stelleMotor(0x03, 0x04, motorVorneLinks, distanceInCentimeters);
+        stelleMotor(0x05, 0x06, motorHintenRechts, distanceInCentimeters);
+        stelleMotor(0x07, 0x08, motorHintenLinks, distanceInCentimeters);
     }
 
-    function stelleMotor(adresse1: number, adresse2: number, motorwert: number, abstandInZentimetern : number) {
+    function stelleMotor(adresse1: number, adresse2: number, speed: number, distanceInCentimeters : number) {
         
-        let speed = Math.trunc(Math.map(Math.abs(motorwert), 0, 100, 0, 255));
-
-        if (motorwert == 0 || (motorwert > 0 && (abstandInZentimetern < 10 || abstandInZentimetern > 1200))) {
+        if (speed == 0) {
             i2cWrite(adresse1, 0);
             i2cWrite(adresse2, 0);
-        } else if (motorwert > 0) {
+        } else if (speed > 0) {
+
+            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+
             i2cWrite(adresse1, 0);
-            i2cWrite(adresse2, speed);
+            i2cWrite(adresse2, konvertiereInMotorSteuerwert(adjustedSpeed));
         } else {
             i2cWrite(adresse2, 0);
-            i2cWrite(adresse1, speed);
+            i2cWrite(adresse1, konvertiereInMotorSteuerwert(speed));
         }
     }
 
-    //% block="Vorwörts mit Geschwindigkeit: $speed \\%"
-    //% speed.min=0 speed.max=100
+    function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
+
+        if (distanceInCentimeters > 1200) {
+            return 0;
+        } else if (distanceInCentimeters > 40) {
+            return targetSpeed;
+        }
+
+        return Math.map(distanceInCentimeters, 10, 40, 0, 50);
+    }
+
+    function konvertiereInMotorSteuerwert(speed: number) {
+        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 0, 255));
+    }
+
+    //% block="Vorwörts mit Geschwindigkeit: $motorwert \\%"
+    //% motorwert.min=0 motorwert.max=100
     //% group="Motor" weight=100
     export function MotorenVorwärts(speed: number) {
 
-        let abstandInZentimetern = ultra();
-
-        if (abstandInZentimetern < 10 || abstandInZentimetern > 1200) {
-            MotorenAnhalten();
-            return;
-        }
-            
-        MotorVorneLinks(EngineRotationDirection.Forward, speed);
-        MotorVorneRechts(EngineRotationDirection.Forward, speed);
-        MotorHintenLinks(EngineRotationDirection.Forward, speed);
-        MotorHintenRechts(EngineRotationDirection.Forward, speed);
+        let distanceInCentimeters = ultra();
+        let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+             
+        MotorVorneLinks(EngineRotationDirection.Forward, adjustedSpeed);
+        MotorVorneRechts(EngineRotationDirection.Forward, adjustedSpeed);
+        MotorHintenLinks(EngineRotationDirection.Forward, adjustedSpeed);
+        MotorHintenRechts(EngineRotationDirection.Forward, adjustedSpeed);
     }
 
     //% block="Rückwärts mit Geschwindigkeit: $speed \\%"
@@ -141,12 +153,11 @@ namespace mecanumRobotV2 {
     //% group="Motor" weight=97
     export function MotorVorneRechts(engineRotationDirection: EngineRotationDirection, speed: number) {
 
-        let speed_value = Math.map(speed, 0, 100, 0, 255);
         if (engineRotationDirection == 0) {
             i2cWrite(0x01, 0); //M2A
-            i2cWrite(0x02, speed_value); //M2B
+            i2cWrite(0x02, konvertiereInMotorSteuerwert(speed)); //M2B
         } else if (engineRotationDirection == 1) {
-            i2cWrite(0x01, speed_value); //M2A
+            i2cWrite(0x01, konvertiereInMotorSteuerwert(speed)); //M2A
             i2cWrite(0x02, 0); //M2B
         }
     }
@@ -156,12 +167,11 @@ namespace mecanumRobotV2 {
     //% group="Motor" weight=97
     export function MotorVorneLinks(engineRotationDirection: EngineRotationDirection, speed: number) {
 
-        let speed_value = Math.map(speed, 0, 100, 0, 255);
         if (engineRotationDirection == 0) {
             i2cWrite(0x03, 0); //M2A
-            i2cWrite(0x04, speed_value); //M2B
+            i2cWrite(0x04, konvertiereInMotorSteuerwert(speed)); //M2B
         } else if (engineRotationDirection == 1) {
-            i2cWrite(0x03, speed_value); //M2A
+            i2cWrite(0x03, konvertiereInMotorSteuerwert(speed)); //M2A
             i2cWrite(0x04, 0); //M2B
         }
     }
@@ -171,12 +181,11 @@ namespace mecanumRobotV2 {
     //% group="Motor" weight=97
     export function MotorHintenLinks(engineRotationDirection: EngineRotationDirection, speed: number) {
 
-        let speed_value = Math.map(speed, 0, 100, 0, 255);
         if (engineRotationDirection == 0) {
             i2cWrite(0x07, 0); //M2A
-            i2cWrite(0x08, speed_value); //M2B
+            i2cWrite(0x08, konvertiereInMotorSteuerwert(speed)); //M2B
         } else if (engineRotationDirection == 1) {
-            i2cWrite(0x07, speed_value); //M2A
+            i2cWrite(0x07, konvertiereInMotorSteuerwert(speed)); //M2A
             i2cWrite(0x08, 0); //M2B
         }
     }
@@ -186,12 +195,11 @@ namespace mecanumRobotV2 {
     //% group="Motor" weight=97
     export function MotorHintenRechts(engineRotationDirection: EngineRotationDirection, speed: number) {
 
-        let speed_value = Math.map(speed, 0, 100, 0, 255);
         if (engineRotationDirection == 0) {
             i2cWrite(0x05, 0); //M2A
-            i2cWrite(0x06, speed_value); //M2B
+            i2cWrite(0x06, konvertiereInMotorSteuerwert(speed)); //M2B
         } else if (engineRotationDirection == 1) {
-            i2cWrite(0x05, speed_value); //M2A
+            i2cWrite(0x05, konvertiereInMotorSteuerwert(speed)); //M2A
             i2cWrite(0x06, 0); //M2B
         }
     }
