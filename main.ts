@@ -88,8 +88,8 @@ namespace mecanumRobotV2 {
         return Math.trunc(Math.map(Math.abs(speed), 0, 100, 0, 255));
     }
 
-    //% block="Vorwörts mit Geschwindigkeit: $motorwert \\%"
-    //% motorwert.min=0 motorwert.max=100
+    //% block="Vorwörts mit Geschwindigkeit: $speed \\%"
+    //% speed.min=0 speed.max=100
     //% group="Motor" weight=100
     export function MotorenVorwärts(speed: number) {
 
