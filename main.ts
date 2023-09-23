@@ -81,6 +81,7 @@ namespace mecanumRobotV2 {
 
         if (abstandInZentimetern < 10 || abstandInZentimetern > 1200) {
             MotorenAnhalten();
+            return;
         }
             
         MotorVorneLinks(EngineRotationDirection.Forward, speed);
