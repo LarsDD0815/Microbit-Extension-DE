@@ -166,7 +166,7 @@ namespace mecanumRobotV2 {
         // read echo pulse  max distance : 6m(35000us)  
         let laufzeit = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
         
-        let lastMesuredDistanceInCentimeters = Number.MAX_VALUE;
+        let lastMesuredDistanceInCentimeters = 600;
         if (laufzeit != 0) {
             lastMesuredDistanceInCentimeters = Math.round(laufzeit / 58);
         }
