@@ -189,7 +189,7 @@ namespace mecanumRobotV2 {
         }
     }
 
-    function findeNeueRichtung() {
+    function findeNeueRichtung_servo() {
 
         setServo(0);
 
@@ -235,6 +235,50 @@ namespace mecanumRobotV2 {
 
         return targetAngle;
     }
+
+    function findeNeueRichtung() {
+
+        let compassAngle = input.compassHeading();
+
+        basic.showNumber(compassAngle);
+        basic.pause(5000);
+
+        let maximaleEnternungZumHindernis = 0;
+        let servoAusschlagMitMaximalerEnternungZumHindernis = -180; // Umdrehen
+        for (let servoAusschlag = -90; servoAusschlag <= 90; servoAusschlag++) {
+            
+            ausrichten(servoAusschlag);
+
+            const entfernungZumHindernis = entfernungInZentimetern()
+            if (entfernungZumHindernis <= minDistanceInCentimeters) {
+                continue;
+            }
+
+            
+            if (entfernungZumHindernis <= maximaleEnternungZumHindernis) {
+                continue;
+            }
+               
+            maximaleEnternungZumHindernis = entfernungZumHindernis;
+            servoAusschlagMitMaximalerEnternungZumHindernis = servoAusschlag;
+        }
+
+        setServo(compassAngle);
+
+        let targetAngle = compassAngle + servoAusschlagMitMaximalerEnternungZumHindernis;
+        if (targetAngle > 360) {
+            targetAngle -= 360;
+        } else if (targetAngle < 0) {
+            targetAngle += 360;
+        }
+
+        basic.showNumber(targetAngle);
+        basic.pause(5000)
+
+        return targetAngle;
+    }
+
+
 
     function ausrichten(targetAngle: number) {
 
