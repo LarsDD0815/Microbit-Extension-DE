@@ -9,9 +9,11 @@ enum RotationDirection {
 }
 
 const autoRouteSpeed = 20;
-const rotationSpeed = 5;
+const rotationSpeed = 15;
 const minDistanceInCentimeters = 20;
 const rotationAccuracyInDegrees = 5;
+
+let currentSpeed = 0;
 
 enum LineTrackingSensor {
     //% block="links"
@@ -126,7 +128,10 @@ namespace mecanumRobotV2 {
         let iterations = 0;
 
         while (iterations++ < 4) {
-            fahreBisHindernis();
+            //fahreBisHindernis();
+
+            basic.showNumber(iterations);
+            basic.pause(3000);
 
             const neueRichtung = findeNeueRichtung();
 
@@ -182,27 +187,24 @@ namespace mecanumRobotV2 {
         while (entfernungInZentimetern() > minDistanceInCentimeters) {
             motorenVorwärts(autoRouteSpeed);
         }
-        
-        basic.showString('_');
-        basic.pause(5000);
-
-        motorenAnhalten();
     }
 
     function findeNeueRichtung() {
 
-        basic.showString('?');
-        basic.pause(5000);
+        setServo(0);
 
         let compassAngle = input.compassHeading();
 
         basic.showNumber(compassAngle);
-        basic.pause(5000)
+        basic.pause(5000);
 
         let maximaleEnternungZumHindernis = 0;
         let servoAusschlagMitMaximalerEnternungZumHindernis = -180; // Umdrehen
         for (let servoAusschlag = -90; servoAusschlag <= 90; servoAusschlag++) {
             
+            basic.showNumber(servoAusschlag);
+            basic.pause(100);
+
             setServo(servoAusschlag);
 
             const entfernungZumHindernis = entfernungInZentimetern()
