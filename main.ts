@@ -261,9 +261,11 @@ namespace mecanumRobotV2 {
     }
 
    
-
-    function setServo(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle + 90)
+    //% block="set servo to angle %angle"
+    //% group="Servo" weight=70
+    //% angle.min=-90 angle.max.max=90
+    export function setServo(angle: number): void {
+        pins.servoWritePin(AnalogPin.P14, angle)
     }
 
     
