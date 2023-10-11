@@ -286,6 +286,12 @@ namespace mecanumRobotV2 {
 
         const currentAngle = input.compassHeading();
 
+        basic.showNumber(input.compassHeading());
+        basic.pause(5000)
+        basic.showNumber(targetAngle);
+        basic.pause(5000)
+
+
         const diffAngle = targetAngle - currentAngle;
         let turningDirection = RotationDirection.Right;
 
@@ -294,11 +300,13 @@ namespace mecanumRobotV2 {
         }
 
         while (Math.abs(targetAngle - input.compassHeading()) > rotationAccuracyInDegrees) {
+            
+            
             if (turningDirection == RotationDirection.Right) {
-                basic.showString('>');
+                basic.showString('<');
                 rechtsDrehen(rotationSpeed);
             } else {
-                basic.showString('<');
+                basic.showString('>');
                 linksDrehen(rotationSpeed);
             }
         }
