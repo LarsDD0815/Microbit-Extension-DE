@@ -11,7 +11,7 @@ enum RotationDirection {
 const autoRouteSpeed = 20;
 const rotationSpeed = 15;
 const minDistanceInCentimeters = 20;
-const rotationAccuracyInDegrees = 5;
+const distanceMesurementThreshold = 5;
 
 let currentSpeed = 0;
 
@@ -128,14 +128,9 @@ namespace mecanumRobotV2 {
         let iterations = 0;
 
         while (iterations++ < 4) {
-            //fahreBisHindernis();
+            motorenVorwärts(autoRouteSpeed);
 
-            basic.showNumber(iterations);
-            basic.pause(3000);
-
-            const neueRichtung = findeNeueRichtung();
-
-            ausrichten(neueRichtung);
+            neuAusrichten();
         }
     }
 
@@ -180,13 +175,6 @@ namespace mecanumRobotV2 {
         let distanceInCentimeters = Math.round(ret / 58);
 
         return distanceInCentimeters > 600 ? 0 : distanceInCentimeters;
-    }
-
-    function fahreBisHindernis() {
-
-        while (entfernungInZentimetern() > minDistanceInCentimeters) {
-            motorenVorwärts(autoRouteSpeed);
-        }
     }
 
     function findeNeueRichtung_servo() {
@@ -236,82 +224,25 @@ namespace mecanumRobotV2 {
         return targetAngle;
     }
 
-    function findeNeueRichtung() {
+    function neuAusrichten() {
 
-        let compassAngle = input.compassHeading();
+        let maxDistance = 0;
 
-        basic.showNumber(compassAngle);
-        basic.pause(5000);
+        rechtsDrehen(rotationSpeed);
 
-        let maximaleEnternungZumHindernis = 0;
-        let servoAusschlagMitMaximalerEnternungZumHindernis = -180; // Umdrehen
-        for (let servoAusschlag = -90; servoAusschlag <= 90; servoAusschlag++) {
-            
-            ausrichten(servoAusschlag);
+        while (true) {
+            const currentDistance = entfernungInZentimetern();
 
-            const entfernungZumHindernis = entfernungInZentimetern()
-            if (entfernungZumHindernis <= minDistanceInCentimeters) {
+            if (currentDistance > maxDistance) {
+                maxDistance = currentDistance;
                 continue;
             }
 
-            
-            if (entfernungZumHindernis <= maximaleEnternungZumHindernis) {
-                continue;
-            }
-               
-            maximaleEnternungZumHindernis = entfernungZumHindernis;
-            servoAusschlagMitMaximalerEnternungZumHindernis = servoAusschlag;
-        }
-
-        setServo(compassAngle);
-
-        let targetAngle = compassAngle + servoAusschlagMitMaximalerEnternungZumHindernis;
-        if (targetAngle > 360) {
-            targetAngle -= 360;
-        } else if (targetAngle < 0) {
-            targetAngle += 360;
-        }
-
-        basic.showNumber(targetAngle);
-        basic.pause(5000)
-
-        return targetAngle;
-    }
-
-
-    //% block="ausrichten %angle"
-    //% group="Motor"
-    //% angle.min=0 angle.max.max=360
-    export function ausrichten(targetAngle: number) {
-
-        const currentAngle = input.compassHeading();
-
-        basic.showNumber(input.compassHeading());
-        basic.pause(5000)
-        basic.showNumber(targetAngle);
-        basic.pause(5000)
-
-
-        const diffAngle = targetAngle - currentAngle;
-        let turningDirection = RotationDirection.Right;
-
-        if (diffAngle >= 180 || (diffAngle < 0 && diffAngle >= -180)) {
-            turningDirection = RotationDirection.Left;
-        }
-
-        while (Math.abs(targetAngle - input.compassHeading()) > rotationAccuracyInDegrees) {
-            
-            
-            if (turningDirection == RotationDirection.Right) {
-                basic.showString('<');
-                rechtsDrehen(rotationSpeed);
-            } else {
-                basic.showString('>');
-                linksDrehen(rotationSpeed);
+            if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
+                stop();
+                break;
             }
         }
-
-        basic.showString('o');
     }
 
    
@@ -321,8 +252,6 @@ namespace mecanumRobotV2 {
     export function setServo(angle: number): void {
         pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
-
-    
 
     function motorVorneRechts(engineRotationDirection: TurnWheels, speed: number) {
 
