@@ -279,7 +279,9 @@ namespace mecanumRobotV2 {
     }
 
 
-
+    //% block="ausrichten %angle"
+    //% group="Motor"
+    //% angle.min=0 angle.max.max=360
     function ausrichten(targetAngle: number) {
 
         const currentAngle = input.compassHeading();
@@ -309,7 +311,7 @@ namespace mecanumRobotV2 {
     //% group="Servo" weight=70
     //% angle.min=-90 angle.max.max=90
     export function setServo(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle)
+        pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
 
     
