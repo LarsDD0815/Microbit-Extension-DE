@@ -239,7 +239,7 @@ namespace mecanumRobotV2 {
             }
 
             if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
-                stop();
+                motorenAnhalten();
                 break;
             }
         }
