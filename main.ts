@@ -282,7 +282,7 @@ namespace mecanumRobotV2 {
     //% block="ausrichten %angle"
     //% group="Motor"
     //% angle.min=0 angle.max.max=360
-    function ausrichten(targetAngle: number) {
+    export function ausrichten(targetAngle: number) {
 
         const currentAngle = input.compassHeading();
 
