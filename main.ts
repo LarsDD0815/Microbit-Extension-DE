@@ -150,11 +150,12 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    let lastValidSignalRuntime = 0;
+    let lastMesuredDistancesInCentimeters: number[] = [];
+
     //% block="Enternung zum Hindernis"
     //% group="Sensor"
     export function entfernungInZentimetern(): number {
-        //send trig pulse
+
         pins.setPull(DigitalPin.P15, PinPullMode.PullNone);
         pins.digitalWritePin(DigitalPin.P15, 0)
         control.waitMicros(2);
@@ -164,17 +165,25 @@ namespace mecanumRobotV2 {
 
         // read echo pulse  max distance : 6m(35000us)  
         let laufzeit = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
-        let ret = laufzeit;
-
-        //Eliminate the occasional bad data
-        if (ret == 0 && lastValidSignalRuntime != 0) {
-            ret = lastValidSignalRuntime;
+        
+        let lastMesuredDistanceInCentimeters = Number.MAX_VALUE;
+        if (laufzeit != 0) {
+            lastMesuredDistanceInCentimeters = Math.round(laufzeit / 58);
         }
-        lastValidSignalRuntime = laufzeit;
 
-        let distanceInCentimeters = Math.round(ret / 58);
+        lastMesuredDistancesInCentimeters.push(lastMesuredDistanceInCentimeters);
+        if (lastMesuredDistancesInCentimeters.length > 10) {
+            lastMesuredDistancesInCentimeters.shift();
+        }
 
-        return distanceInCentimeters > 600 ? 0 : distanceInCentimeters;
+        let sum = 0;
+ 
+        lastMesuredDistancesInCentimeters.forEach(function (item, idx) {
+            sum += item;
+        });
+
+        // Returning the average of the numbers
+        return sum / lastMesuredDistancesInCentimeters.length;
     }
 
     function findeNeueRichtung_servo() {
