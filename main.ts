@@ -151,11 +151,24 @@ namespace mecanumRobotV2 {
     }
 
     const lastMesuredDistancesInCentimeters: number[] = [];
-    let currentDistanceInCentimeters : number;
+    
+    let lastMesuredOutlierValueInCentimeters: number;
+    let currentDistanceInCentimeters: number = -1;
 
     basic.forever(function () {        
 
-        let lastMesuredDistanceInCentimeters = entfernungInZentimetern();
+        const lastMesuredDistanceInCentimeters = entfernungInZentimetern();
+        const currentAverageDistance = calculateAverage(lastMesuredDistancesInCentimeters)
+
+        if (Math.abs(currentAverageDistance - lastMesuredDistanceInCentimeters) > currentAverageDistance * 1.15) {
+            lastMesuredOutlierValueInCentimeters = lastMesuredDistanceInCentimeters;
+            return;
+        }
+
+        if (Math.abs(lastMesuredDistanceInCentimeters - lastMesuredOutlierValueInCentimeters) > lastMesuredOutlierValueInCentimeters * 1.15) {
+            // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
+            return;
+        }
 
         lastMesuredDistancesInCentimeters.push(lastMesuredDistanceInCentimeters);
         
