@@ -155,31 +155,33 @@ namespace mecanumRobotV2 {
     let lastOutlierDistance: number;
     let currentDistanceInCentimeters: number = 0;
 
-    basic.forever(function () {        
+    control.inBackground(function () {        
 
-        const currentDistance = entfernungInZentimetern();
-        if (currentDistance == null) {
-            return;
-        }
+        while (true) {
+            const currentDistance = entfernungInZentimetern();
+            if (currentDistance == null) {
+                return;
+            }
 
-        const currentAverageDistance = calculateAverage(recentDistances);
+            const currentAverageDistance = calculateAverage(recentDistances);
 
-        if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
-            lastOutlierDistance = currentDistance;
-        }
+            if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
+                lastOutlierDistance = currentDistance;
+            }
 
-        if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
-            // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
-            return;
-        }
+            if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
+                // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
+                return;
+            }
 
-        recentDistances.push(currentDistance);
+            recentDistances.push(currentDistance);
         
-        if (recentDistances.length > 10) {
-            recentDistances.shift();
-        }
+            if (recentDistances.length > 5) {
+                recentDistances.shift();
+            }
 
-        currentDistanceInCentimeters = calculateAverage(recentDistances);
+            currentDistanceInCentimeters = calculateAverage(recentDistances);
+        }
     })
 
     //% block="Mittlere Enternung zum Hindernis"
