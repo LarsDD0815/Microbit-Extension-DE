@@ -218,7 +218,7 @@ namespace mecanumRobotV2 {
             sumOfValues += value;
         });
 
-        return sumOfValues / values.length;
+        return Math.round(sumOfValues / values.length);
     }
 
     function findeNeueRichtung_servo() {
