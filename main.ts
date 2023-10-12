@@ -53,7 +53,7 @@ namespace mecanumRobotV2 {
         let motorHintenRechts = parseInt(rohdaten[2]);
         let motorHintenLinks = parseInt(rohdaten[3]);
 
-        let distanceInCentimeters = entfernungInZentimetern();
+        let distanceInCentimeters = aktuelleEntfernungInZentimetern();
 
         stelleMotor(0x01, 0x02, motorVorneRechts, distanceInCentimeters);
         stelleMotor(0x03, 0x04, motorVorneLinks, distanceInCentimeters);
@@ -66,7 +66,7 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function motorenVorwärts(speed: number) {
 
-        let distanceInCentimeters = entfernungInZentimetern();
+        let distanceInCentimeters = aktuelleEntfernungInZentimetern();
         let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
              
         motorVorneLinks(TurnWheels.Forward, adjustedSpeed);
@@ -150,9 +150,29 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    let lastMesuredDistancesInCentimeters: number[] = [];
+    const lastMesuredDistancesInCentimeters: number[] = [];
+    let currentDistanceInCentimeters : number;
 
-    //% block="Enternung zum Hindernis"
+    basic.forever(function () {        
+
+        let lastMesuredDistanceInCentimeters = entfernungInZentimetern();
+
+        lastMesuredDistancesInCentimeters.push(lastMesuredDistanceInCentimeters);
+        
+        if (lastMesuredDistancesInCentimeters.length > 10) {
+            lastMesuredDistancesInCentimeters.shift();
+        }
+
+        currentDistanceInCentimeters = calculateAverage(lastMesuredDistancesInCentimeters);
+    })
+
+    //% block="Mittlere Enternung zum Hindernis"
+    //% group="Sensor"
+    export function aktuelleEntfernungInZentimetern(): number {
+        return currentDistanceInCentimeters;
+    }
+
+    //% block="Aktuelle Entferung zum Hindernis"
     //% group="Sensor"
     export function entfernungInZentimetern(): number {
 
@@ -164,26 +184,29 @@ namespace mecanumRobotV2 {
         pins.digitalWritePin(DigitalPin.P15, 0)
 
         // read echo pulse  max distance : 6m(35000us)  
-        let laufzeit = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
+        let laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
         
         let lastMesuredDistanceInCentimeters = 600;
-        if (laufzeit != 0) {
-            lastMesuredDistanceInCentimeters = Math.round(laufzeit / 58);
+        if (laufzeitInMilliseconds != 0) {
+            lastMesuredDistanceInCentimeters = Math.round(laufzeitInMilliseconds / 58);
         }
 
-        lastMesuredDistancesInCentimeters.push(lastMesuredDistanceInCentimeters);
-        if (lastMesuredDistancesInCentimeters.length > 10) {
-            lastMesuredDistancesInCentimeters.shift();
-        }
+        return lastMesuredDistanceInCentimeters;
+    }
 
-        let sum = 0;
+    function calculateAverage(values: number[]): number {
  
-        lastMesuredDistancesInCentimeters.forEach(function (item, idx) {
-            sum += item;
+        if (values.length == 0) {
+            return 0;
+        }
+ 
+        let sumOfValues = 0;
+ 
+        values.forEach(function (value, idx) {
+            sumOfValues += value;
         });
 
-        // Returning the average of the numbers
-        return sum / lastMesuredDistancesInCentimeters.length;
+        return sumOfValues / values.length;
     }
 
     function findeNeueRichtung_servo() {
@@ -204,7 +227,7 @@ namespace mecanumRobotV2 {
 
             setServo(servoAusschlag);
 
-            const entfernungZumHindernis = entfernungInZentimetern()
+            const entfernungZumHindernis = aktuelleEntfernungInZentimetern()
             if (entfernungZumHindernis <= minDistanceInCentimeters) {
                 continue;
             }
@@ -240,7 +263,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (true) {
-            const currentDistance = entfernungInZentimetern();
+            const currentDistance = aktuelleEntfernungInZentimetern();
 
             if (currentDistance > maxDistance) {
                 maxDistance = currentDistance;
