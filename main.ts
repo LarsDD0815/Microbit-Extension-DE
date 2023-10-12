@@ -158,7 +158,11 @@ namespace mecanumRobotV2 {
     basic.forever(function () {        
 
         const currentDistance = entfernungInZentimetern();
-        const currentAverageDistance = calculateAverage(recentDistances)
+        if (currentDistance == null) {
+            return;
+        }
+
+        const currentAverageDistance = calculateAverage(recentDistances);
 
         if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
             lastOutlierDistance = currentDistance;
@@ -184,9 +188,7 @@ namespace mecanumRobotV2 {
         return currentDistanceInCentimeters;
     }
 
-    //% block="Aktuelle Entferung zum Hindernis"
-    //% group="Sensor"
-    export function entfernungInZentimetern(): number {
+    function entfernungInZentimetern(): number {
 
         pins.setPull(DigitalPin.P15, PinPullMode.PullNone);
         pins.digitalWritePin(DigitalPin.P15, 0)
@@ -196,14 +198,14 @@ namespace mecanumRobotV2 {
         pins.digitalWritePin(DigitalPin.P15, 0)
 
         // read echo pulse  max distance : 6m(35000us)  
-        let laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
+        const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
         
-        let lastMesuredDistanceInCentimeters = 600;
+        let distanceInCentimeters : number = null;
         if (laufzeitInMilliseconds != 0) {
-            lastMesuredDistanceInCentimeters = Math.round(laufzeitInMilliseconds / 58);
+            distanceInCentimeters = Math.round(laufzeitInMilliseconds / 58);
         }
 
-        return Math.round(lastMesuredDistanceInCentimeters);
+        return distanceInCentimeters >= 5 ? distanceInCentimeters : null;
     }
 
     function calculateAverage(values: number[]): number {
