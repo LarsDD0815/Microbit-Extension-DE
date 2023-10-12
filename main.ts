@@ -203,7 +203,7 @@ namespace mecanumRobotV2 {
             lastMesuredDistanceInCentimeters = Math.round(laufzeitInMilliseconds / 58);
         }
 
-        return lastMesuredDistanceInCentimeters;
+        return Math.round(lastMesuredDistanceInCentimeters);
     }
 
     function calculateAverage(values: number[]): number {
