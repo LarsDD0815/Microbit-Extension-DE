@@ -150,33 +150,32 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    const lastMesuredDistancesInCentimeters: number[] = [];
+    const recentDistances: number[] = [];
     
-    let lastMesuredOutlierValueInCentimeters: number;
-    let currentDistanceInCentimeters: number = -1;
+    let lastOutlierDistance: number;
+    let currentDistanceInCentimeters: number = 0;
 
     basic.forever(function () {        
 
-        const lastMesuredDistanceInCentimeters = entfernungInZentimetern();
-        const currentAverageDistance = calculateAverage(lastMesuredDistancesInCentimeters)
+        const currentDistance = entfernungInZentimetern();
+        const currentAverageDistance = calculateAverage(recentDistances)
 
-        if (Math.abs(currentAverageDistance - lastMesuredDistanceInCentimeters) > currentAverageDistance * 1.15) {
-            lastMesuredOutlierValueInCentimeters = lastMesuredDistanceInCentimeters;
-            return;
+        if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
+            lastOutlierDistance = currentDistance;
         }
 
-        if (Math.abs(lastMesuredDistanceInCentimeters - lastMesuredOutlierValueInCentimeters) > lastMesuredOutlierValueInCentimeters * 1.15) {
+        if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
             // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
             return;
         }
 
-        lastMesuredDistancesInCentimeters.push(lastMesuredDistanceInCentimeters);
+        recentDistances.push(currentDistance);
         
-        if (lastMesuredDistancesInCentimeters.length > 10) {
-            lastMesuredDistancesInCentimeters.shift();
+        if (recentDistances.length > 10) {
+            recentDistances.shift();
         }
 
-        currentDistanceInCentimeters = calculateAverage(lastMesuredDistancesInCentimeters);
+        currentDistanceInCentimeters = calculateAverage(recentDistances);
     })
 
     //% block="Mittlere Enternung zum Hindernis"
