@@ -181,6 +181,8 @@ namespace mecanumRobotV2 {
             }
 
             currentDistanceInCentimeters = calculateAverage(recentDistances);
+
+            basic.pause(20)
         }
     })
 
