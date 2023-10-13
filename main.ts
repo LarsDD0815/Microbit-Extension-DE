@@ -398,7 +398,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        const maxSpeed = Math.map(distanceInCentimeters, minDistanceInCentimeters, 100, 1, 100);
+        const maxSpeed = Math.map(distanceInCentimeters, minDistanceInCentimeters, 100, 1, 40);
 
         return Math.min(targetSpeed, maxSpeed);
     }
