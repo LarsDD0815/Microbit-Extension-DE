@@ -125,11 +125,12 @@ namespace mecanumRobotV2 {
         let currentForwardSpeed = 0;
 
         while (true) {
+
+            basic.pause(20);
+
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
             
-            basic.showNumber(distanceInCentimeters);
-
             if (currentForwardSpeed == adjustedSpeed) {
                 continue;
             }
@@ -137,7 +138,7 @@ namespace mecanumRobotV2 {
             currentForwardSpeed = adjustedSpeed;
             if (adjustedSpeed == 0) {
                 motorenAnhalten();
-                neuAusrichten();
+                //neuAusrichten();
             }
 
             motorenVorwärts(adjustedSpeed);         
