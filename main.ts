@@ -394,11 +394,11 @@ namespace mecanumRobotV2 {
 
         if (distanceInCentimeters > 50) {
             return targetSpeed;
-        } else if (distanceInCentimeters < 10) {
+        } else if (distanceInCentimeters < minDistanceInCentimeters) {
             return 0;
         }
 
-        const maxSpeed = Math.map(distanceInCentimeters, 10, 50, 1, 100);
+        const maxSpeed = Math.map(distanceInCentimeters, minDistanceInCentimeters, 50, 1, 100);
 
         return Math.min(targetSpeed, maxSpeed);
     }
@@ -408,7 +408,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 50, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 30, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
