@@ -12,7 +12,7 @@ const autoRouteSpeed = 30;
 const rotationSpeed = 30;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
-const minimumEngineSpeed = 17;
+const minimumEngineSpeed = 20;
 
 let currentSpeed = 0;
 
@@ -132,8 +132,6 @@ namespace mecanumRobotV2 {
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
             
-            serial.writeLine(".|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
-
             if (currentForwardSpeed == adjustedSpeed) {
                 continue;
             }
@@ -147,13 +145,13 @@ namespace mecanumRobotV2 {
 
                 motorenAnhalten();
 
-                currentForwardSpeed = 0;
-                isMovingForward = false;
+                // currentForwardSpeed = 0;
+                // isMovingForward = false;
 
-                serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
-                basic.pause(5000);
+                // serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
+                // basic.pause(5000);
 
-                neuAusrichten();
+                // neuAusrichten();
             }
         }
     }
