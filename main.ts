@@ -8,7 +8,7 @@ enum RotationDirection {
     Left
 }
 
-const rotationSpeed = 10;
+const rotationSpeed = 5;
 const minDistanceInCentimeters = 15;
 const distanceMesurementThreshold = 15;
 const minimumEngineSpeed = 20;
@@ -298,19 +298,23 @@ namespace mecanumRobotV2 {
 
         rechtsDrehen(rotationSpeed);
 
-        while (true) {
+        let start = input.runningTime();
+
+        while (input.runningTime() < start + 4000) {
             const currentDistance = aktuelleEntfernungInZentimetern();
 
-            basic.pause(20);
-
-            if (currentDistance >= maxDistance) {
+            if (currentDistance > maxDistance) {
                 maxDistance = currentDistance;
-                continue;
             }
+        }
+
+        linksDrehen(rotationSpeed);
+
+        while (true) {
+
+            const currentDistance = aktuelleEntfernungInZentimetern();
 
             if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
-               // motorenAnhalten();
-
                 break;
             }
         }
