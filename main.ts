@@ -151,6 +151,7 @@ namespace mecanumRobotV2 {
                 isMovingForward = false;
 
                 serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
+                basic.pause(5000);
 
                 neuAusrichten();
             }
@@ -313,8 +314,10 @@ namespace mecanumRobotV2 {
             basic.pause(20);
 
             serial.writeLine(">>|" + currentDistance + "|" + maxDistance);
+            basic.pause(1000);
 
-            if (currentDistance > maxDistance) {
+
+            if (currentDistance >= maxDistance) {
                 maxDistance = currentDistance;
                 continue;
             }
@@ -323,6 +326,7 @@ namespace mecanumRobotV2 {
                 motorenAnhalten();
                 
                 serial.writeLine("_");
+                basic.pause(1000);
 
                 break;
             }
