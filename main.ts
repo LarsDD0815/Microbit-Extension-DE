@@ -8,7 +8,7 @@ enum RotationDirection {
     Left
 }
 
-const autoRouteSpeed = 20;
+const autoRouteSpeed = 15;
 const rotationSpeed = 15;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
@@ -128,14 +128,17 @@ namespace mecanumRobotV2 {
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
 
-            if (currentForwardSpeed != adjustedSpeed) {
-                currentForwardSpeed = adjustedSpeed;
-                motorenVorwärts(adjustedSpeed);
+            if (currentForwardSpeed == adjustedSpeed) {
+                continue;
             }
 
+            currentForwardSpeed = adjustedSpeed;
             if (adjustedSpeed == 0) {
+                motorenAnhalten();
                 neuAusrichten();
             }
+
+            motorenVorwärts(adjustedSpeed);         
         }
     }
 
@@ -373,7 +376,7 @@ namespace mecanumRobotV2 {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 10, 50, 0, 35);
+        return Math.map(distanceInCentimeters, 10, 50, 0, Math.min(targetSpeed, 35));
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
