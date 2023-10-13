@@ -12,7 +12,7 @@ const autoRouteSpeed = 25;
 const rotationSpeed = 15;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
-const minimumEngineSpeed = 15;
+const minimumEngineSpeed = 17;
 
 let currentSpeed = 0;
 
@@ -127,7 +127,9 @@ namespace mecanumRobotV2 {
 
         while (true) {
 
+            basic.showText('.');
             basic.pause(20);
+
 
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
@@ -144,9 +146,6 @@ namespace mecanumRobotV2 {
                 motorenAnhalten();
 
                 currentForwardSpeed = 0;
-
-                basic.showString("_")
-                basic.pause(3000);
 
                 neuAusrichten();
             }
@@ -293,10 +292,16 @@ namespace mecanumRobotV2 {
 
         let maxDistance = 0;
 
+        basic.showText('o');
+        basic.pause(2000);
+
+
         rechtsDrehen(rotationSpeed);
 
         while (true) {
             const currentDistance = aktuelleEntfernungInZentimetern();
+
+            basic.pause(20);
 
             if (currentDistance > maxDistance) {
                 maxDistance = currentDistance;
@@ -308,6 +313,9 @@ namespace mecanumRobotV2 {
                 break;
             }
         }
+
+        basic.showText('');
+
     }
 
    
