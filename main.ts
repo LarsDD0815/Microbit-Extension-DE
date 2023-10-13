@@ -137,8 +137,6 @@ namespace mecanumRobotV2 {
             currentForwardSpeed = adjustedSpeed;
             isMovingForward = true;
 
-            serial.writeLine("speed: " + currentForwardSpeed);
-
             motorenVorwärts(currentForwardSpeed);
 
             // if (currentForwardSpeed <= minimumEngineSpeed) {
@@ -192,14 +190,14 @@ namespace mecanumRobotV2 {
             return;               
         }
 
-        if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
+       /*  if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
             lastOutlierDistance = currentDistance;
         }
 
         if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
             // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
             return;
-        }
+        } */
 
         recentDistances.push(currentDistance);
         
@@ -207,8 +205,7 @@ namespace mecanumRobotV2 {
             recentDistances.shift();
         }
 
-        currentDistanceInCentimeters = calculateAverage(recentDistances);
-        
+        currentDistanceInCentimeters = calculateAverage(recentDistances);        
     })
 
     //% block="Mittlere Enternung zum Hindernis"
