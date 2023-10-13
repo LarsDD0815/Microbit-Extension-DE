@@ -9,7 +9,7 @@ enum RotationDirection {
 }
 
 const rotationSpeed = 30;
-const minDistanceInCentimeters = 20;
+const minDistanceInCentimeters = 15;
 const distanceMesurementThreshold = 5;
 const minimumEngineSpeed = 20;
 
@@ -408,7 +408,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 35, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
