@@ -65,10 +65,7 @@ namespace mecanumRobotV2 {
     //% speed.min=0 speed.max=100
     //% group="Motor"
     export function motorenVorwärts(speed: number) {
-
-        let distanceInCentimeters = aktuelleEntfernungInZentimetern();
-        let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
-             
+          
         motorVorneLinks(TurnWheels.Forward, adjustedSpeed);
         motorVorneRechts(TurnWheels.Forward, adjustedSpeed);
         motorHintenLinks(TurnWheels.Forward, adjustedSpeed);
@@ -125,12 +122,20 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function folgeWeg() {
 
-        let iterations = 0;
+        let currentForwardSpeed = 0;
 
-        while (iterations++ < 4) {
-            motorenVorwärts(autoRouteSpeed);
+        while (true) {
+            let distanceInCentimeters = aktuelleEntfernungInZentimetern();
+            let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
 
-            neuAusrichten();
+            if (currentForwardSpeed != adjustedSpeed) {
+                currentForwardSpeed = adjustedSpeed;
+                motorenVorwärts(adjustedSpeed);
+            }
+
+            if (adjustedSpeed == 0) {
+                neuAusrichten();
+            }
         }
     }
 
