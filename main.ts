@@ -408,7 +408,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 30, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 1, 100, 35, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
