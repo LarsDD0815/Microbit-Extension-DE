@@ -127,6 +127,8 @@ namespace mecanumRobotV2 {
         while (true) {
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
+            
+            basic.showNumber(distanceInCentimeters);
 
             if (currentForwardSpeed == adjustedSpeed) {
                 continue;
