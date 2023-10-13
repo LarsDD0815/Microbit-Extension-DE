@@ -127,12 +127,11 @@ namespace mecanumRobotV2 {
 
         while (true) {
 
-            basic.showString('_');
-            basic.pause(20);
-
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
             
+            serial.writeLine(".|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
+
             if (currentForwardSpeed == adjustedSpeed) {
                 continue;
             }
@@ -144,13 +143,12 @@ namespace mecanumRobotV2 {
 
             if (currentForwardSpeed <= minimumEngineSpeed) {
 
-                basic.showString('.');
-                basic.pause(2000);
-
                 motorenAnhalten();
 
                 currentForwardSpeed = 0;
                 isMovingForward = false;
+
+                serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
 
                 neuAusrichten();
             }
@@ -307,12 +305,16 @@ namespace mecanumRobotV2 {
 
         let maxDistance = 0;
 
+        serial.writeLine(">");
+
         rechtsDrehen(rotationSpeed);
 
         while (true) {
             const currentDistance = aktuelleEntfernungInZentimetern();
 
             basic.pause(20);
+
+            serial.writeLine(">>|" + currentDistance + "|" + maxDistance);
 
             if (currentDistance > maxDistance) {
                 maxDistance = currentDistance;
@@ -321,12 +323,12 @@ namespace mecanumRobotV2 {
 
             if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
                 motorenAnhalten();
+                
+                serial.writeLine("_");
+
                 break;
             }
         }
-
-        basic.showString('');
-
     }
 
    
