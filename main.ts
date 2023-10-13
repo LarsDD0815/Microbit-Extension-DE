@@ -185,22 +185,22 @@ namespace mecanumRobotV2 {
             return;               
         }
 
-        if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
+        // if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
 
-            recentOutlierDistances.push(currentDistance);
+        //     recentOutlierDistances.push(currentDistance);
             
-            if (recentOutlierDistances.length > smoothingInvervallSize) {
-                recentOutlierDistances.shift();
-            }
+        //     if (recentOutlierDistances.length > smoothingInvervallSize) {
+        //         recentOutlierDistances.shift();
+        //     }
             
-            const averageOutlierDistance = calculateAverage(recentOutlierDistances);
+        //     const averageOutlierDistance = calculateAverage(recentOutlierDistances);
 
-            if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 0.5) {
+        //     if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 0.5) {
                 
-                recentOutlierDistances = [];
-                recentDistances = recentOutlierDistances;
-            }
-        }
+        //         recentOutlierDistances = [];
+        //         recentDistances = recentOutlierDistances;
+        //     }
+        // }
 
         recentDistances.push(currentDistance);
         
