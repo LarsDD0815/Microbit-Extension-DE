@@ -127,7 +127,7 @@ namespace mecanumRobotV2 {
 
         while (true) {
 
-            basic.pause(20);
+            basic.pause(50);
 
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
@@ -145,8 +145,8 @@ namespace mecanumRobotV2 {
 
                 motorenAnhalten();
 
-                // currentForwardSpeed = 0;
-                // isMovingForward = false;
+                currentForwardSpeed = 0;
+                isMovingForward = false;
 
                 // serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
                 // basic.pause(5000);
