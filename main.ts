@@ -127,7 +127,7 @@ namespace mecanumRobotV2 {
 
         while (true) {
 
-            basic.showText('.');
+            basic.showString('.');
             basic.pause(20);
 
 
@@ -292,7 +292,7 @@ namespace mecanumRobotV2 {
 
         let maxDistance = 0;
 
-        basic.showText('o');
+        basic.showString('o');
         basic.pause(2000);
 
 
@@ -314,7 +314,7 @@ namespace mecanumRobotV2 {
             }
         }
 
-        basic.showText('');
+        basic.showString('');
 
     }
 
