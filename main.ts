@@ -170,42 +170,43 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    const recentDistances: number[] = [];
-    
-    let lastOutlierDistance: number;
-    let currentDistanceInCentimeters: number = 0;
+    const smoothingInvervallSize = 5;
 
-    let isMovingForward = false;
+    let recentDistances: number[] = [];    
+    let recentOutlierDistances: number[] = [];
+
+    let currentDistanceInCentimeters: number = 0;
 
     basic.forever(function () {
 
         const currentDistance = entfernungInZentimetern();
         const currentAverageDistance = calculateAverage(recentDistances);
 
-        // if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
-        //     currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
-        // }
 
         if (currentDistance == null) {
             return;               
         }
 
-        if (currentAverageDistance != 0 && currentDistance > currentAverageDistance * 3) {
-            return;
-        }
+        if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
 
-       /*  if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
-            lastOutlierDistance = currentDistance;
-        }
+            recentOutlierDistances.push(currentDistance);
+            
+            if (recentOutlierDistances.length > smoothingInvervallSize) {
+                recentOutlierDistances.shift();
+            }
+            
+            const averageOutlierDistance = calculateAverage(recentOutlierDistances);
 
-        if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
-            // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
-            return;
-        } */
+            if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 0.5) {
+                
+                recentOutlierDistances = [];
+                recentDistances = recentOutlierDistances;
+            }
+        }
 
         recentDistances.push(currentDistance);
         
-        if (recentDistances.length > 5) {
+        if (recentDistances.length > smoothingInvervallSize) {
             recentDistances.shift();
         }
 
