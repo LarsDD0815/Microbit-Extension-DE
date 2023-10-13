@@ -300,7 +300,7 @@ namespace mecanumRobotV2 {
 
         let start = input.runningTime();
 
-        while (input.runningTime() < start + 3000) {
+        while (input.runningTime() < start + 2000) {
 
             basic.pause(50);
 
@@ -314,6 +314,8 @@ namespace mecanumRobotV2 {
         linksDrehen(rotationSpeed);
 
         while (true) {
+
+            basic.pause(50);
 
             const currentDistance = aktuelleEntfernungInZentimetern();
 
