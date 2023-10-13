@@ -190,7 +190,7 @@ namespace mecanumRobotV2 {
             return;               
         }
 
-        if (currentDistance > currentAverageDistance * 3) {
+        if (currentAverageDistance != 0 && currentDistance > currentAverageDistance * 3) {
             return;
         }
 
