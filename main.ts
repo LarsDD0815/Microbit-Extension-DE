@@ -135,7 +135,6 @@ namespace mecanumRobotV2 {
             }
 
             currentForwardSpeed = adjustedSpeed;
-            isMovingForward = true;
 
             motorenVorwärts(currentForwardSpeed);
 
