@@ -12,6 +12,7 @@ const autoRouteSpeed = 25;
 const rotationSpeed = 15;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
+const minimumEngineSpeed = 15;
 
 let currentSpeed = 0;
 
@@ -135,10 +136,8 @@ namespace mecanumRobotV2 {
                 continue;
             }
 
-            basic.showNumber(adjustedSpeed)
-
             currentForwardSpeed = adjustedSpeed;
-            if (adjustedSpeed == 0) {
+            if (adjustedSpeed <= minimumEngineSpeed) {
                 motorenAnhalten();
                 //neuAusrichten();
             }
@@ -385,7 +384,7 @@ namespace mecanumRobotV2 {
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
-        return Math.trunc(Math.map(Math.abs(speed), 10, 100, 0, 255));
+        return Math.trunc(Math.map(Math.abs(speed), minimumEngineSpeed, 100, 0, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
