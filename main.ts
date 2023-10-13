@@ -135,6 +135,8 @@ namespace mecanumRobotV2 {
                 continue;
             }
 
+            basic.showNumber(adjustedSpeed)
+
             currentForwardSpeed = adjustedSpeed;
             if (adjustedSpeed == 0) {
                 motorenAnhalten();
@@ -383,7 +385,7 @@ namespace mecanumRobotV2 {
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
-        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 0, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 10, 100, 0, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
