@@ -200,6 +200,7 @@ namespace mecanumRobotV2 {
             //     recentOutlierDistances.shift();
             // }
             currentDistanceInCentimeters = -1;
+            return;
         }
 
         recentDistances.push(currentDistance);
