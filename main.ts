@@ -9,7 +9,7 @@ enum RotationDirection {
 }
 
 const autoRouteSpeed = 25;
-const rotationSpeed = 17;
+const rotationSpeed = 30;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
 const minimumEngineSpeed = 17;
