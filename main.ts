@@ -392,13 +392,13 @@ namespace mecanumRobotV2 {
 
     function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
 
-        if (distanceInCentimeters > 50) {
+        if (distanceInCentimeters > 100) {
             return targetSpeed;
         } else if (distanceInCentimeters < minDistanceInCentimeters) {
             return 0;
         }
 
-        const maxSpeed = Math.map(distanceInCentimeters, minDistanceInCentimeters, 50, 1, 100);
+        const maxSpeed = Math.map(distanceInCentimeters, minDistanceInCentimeters, 100, 1, 100);
 
         return Math.min(targetSpeed, maxSpeed);
     }
