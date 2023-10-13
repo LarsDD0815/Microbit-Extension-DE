@@ -125,35 +125,33 @@ namespace mecanumRobotV2 {
 
         let currentForwardSpeed = 0;
 
-        while (true) {
-
-            basic.pause(50);
+        basic.forever(function () {
 
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
             
             if (currentForwardSpeed == adjustedSpeed) {
-                continue;
+                return;
             }
 
             currentForwardSpeed = adjustedSpeed;
             isMovingForward = true;
 
-            motorenVorwärts(currentForwardSpeed);         
+            motorenVorwärts(currentForwardSpeed);
 
-            if (currentForwardSpeed <= minimumEngineSpeed) {
+            // if (currentForwardSpeed <= minimumEngineSpeed) {
 
-                motorenAnhalten();
+            //     motorenAnhalten();
 
-                currentForwardSpeed = 0;
-                isMovingForward = false;
+            //     currentForwardSpeed = 0;
+            //     isMovingForward = false;
 
-                // serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
-                // basic.pause(5000);
+            // serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
+            // basic.pause(5000);
 
-                // neuAusrichten();
-            }
-        }
+            // neuAusrichten();
+            //}
+        });
     }
 
     //% block="Liniensensor $sensor"
@@ -302,18 +300,12 @@ namespace mecanumRobotV2 {
 
         let maxDistance = 0;
 
-        serial.writeLine(">");
-
         rechtsDrehen(rotationSpeed);
 
         while (true) {
             const currentDistance = aktuelleEntfernungInZentimetern();
 
             basic.pause(20);
-
-            serial.writeLine(">>|" + currentDistance + "|" + maxDistance);
-            basic.pause(1000);
-
 
             if (currentDistance >= maxDistance) {
                 maxDistance = currentDistance;
@@ -322,9 +314,6 @@ namespace mecanumRobotV2 {
 
             if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
                 motorenAnhalten();
-                
-                serial.writeLine("_");
-                basic.pause(1000);
 
                 break;
             }
@@ -416,7 +405,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 50, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 60, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
