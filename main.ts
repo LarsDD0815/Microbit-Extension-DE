@@ -170,7 +170,7 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    let recentDistances: number[] = [];
+    const recentDistances: number[] = [];
     
     let lastOutlierDistance: number;
     let currentDistanceInCentimeters: number = 0;
@@ -179,15 +179,19 @@ namespace mecanumRobotV2 {
 
     basic.forever(function () {
 
-        let currentDistance = entfernungInZentimetern();
+        const currentDistance = entfernungInZentimetern();
         const currentAverageDistance = calculateAverage(recentDistances);
 
-        if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
-            currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
-        }
+        // if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
+        //     currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
+        // }
 
         if (currentDistance == null) {
             return;               
+        }
+
+        if (currentDistance > currentAverageDistance * 3) {
+            return;
         }
 
        /*  if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
