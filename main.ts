@@ -66,10 +66,10 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function motorenVorwärts(speed: number) {
           
-        motorVorneLinks(TurnWheels.Forward, adjustedSpeed);
-        motorVorneRechts(TurnWheels.Forward, adjustedSpeed);
-        motorHintenLinks(TurnWheels.Forward, adjustedSpeed);
-        motorHintenRechts(TurnWheels.Forward, adjustedSpeed);
+        motorVorneLinks(TurnWheels.Forward, speed);
+        motorVorneRechts(TurnWheels.Forward, speed);
+        motorHintenLinks(TurnWheels.Forward, speed);
+        motorHintenRechts(TurnWheels.Forward, speed);
     }
 
     //% block="Rückwärts mit Geschwindigkeit: $speed \\%"
