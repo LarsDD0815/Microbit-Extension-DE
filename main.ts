@@ -169,7 +169,7 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    const smoothingInvervallSize = 5;
+    const smoothingInvervallSize = 10;
 
     let recentDistances: number[] = [];    
     let recentOutlierDistances: number[] = [];
@@ -180,7 +180,6 @@ namespace mecanumRobotV2 {
 
         const currentDistance = entfernungInZentimetern();
         const currentAverageDistance = calculateAverage(recentDistances);
-
 
         if (currentDistance == null) {
             return;               
