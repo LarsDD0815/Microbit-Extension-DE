@@ -10,7 +10,7 @@ enum RotationDirection {
 
 const rotationSpeed = 30;
 const minDistanceInCentimeters = 15;
-const distanceMesurementThreshold = 5;
+const distanceMesurementThreshold = 15;
 const minimumEngineSpeed = 20;
 
 let currentSpeed = 0;
@@ -136,20 +136,15 @@ namespace mecanumRobotV2 {
 
             currentForwardSpeed = adjustedSpeed;
 
-            motorenVorwärts(currentForwardSpeed);
+            if (currentForwardSpeed > 0) {
+                motorenVorwärts(currentForwardSpeed);
+            } else {
+                motorenAnhalten();
 
-            // if (currentForwardSpeed <= minimumEngineSpeed) {
+                currentForwardSpeed = 0;
 
-            //     motorenAnhalten();
-
-            //     currentForwardSpeed = 0;
-            //     isMovingForward = false;
-
-            // serial.writeLine("_|" + distanceInCentimeters + "|" + adjustedSpeed + "|" + currentForwardSpeed);
-            // basic.pause(5000);
-
-            // neuAusrichten();
-            //}
+                neuAusrichten();
+            }
         });
     }
 
