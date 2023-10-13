@@ -235,6 +235,8 @@ namespace mecanumRobotV2 {
         const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
         
         if (laufzeitInMilliseconds != 0) {
+            serial.writeLine("." + laufzeitInMilliseconds);
+
             return Math.round(laufzeitInMilliseconds / 58);
         }
 
