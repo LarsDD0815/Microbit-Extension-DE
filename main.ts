@@ -169,7 +169,7 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    const smoothingInvervallSize = 10;
+    const smoothingInvervallSize = 5;
 
     let recentDistances: number[] = [];    
     let recentOutlierDistances: number[] = [];
