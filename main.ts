@@ -9,7 +9,7 @@ enum RotationDirection {
 }
 
 const autoRouteSpeed = 25;
-const rotationSpeed = 15;
+const rotationSpeed = 17;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
 const minimumEngineSpeed = 17;
@@ -127,9 +127,8 @@ namespace mecanumRobotV2 {
 
         while (true) {
 
-            basic.showString('.');
+            basic.showString('_');
             basic.pause(20);
-
 
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
@@ -139,13 +138,19 @@ namespace mecanumRobotV2 {
             }
 
             currentForwardSpeed = adjustedSpeed;
+            isMovingForward = true;
 
             motorenVorwärts(currentForwardSpeed);         
 
             if (currentForwardSpeed <= minimumEngineSpeed) {
+
+                basic.showString('.');
+                basic.pause(2000);
+
                 motorenAnhalten();
 
                 currentForwardSpeed = 0;
+                isMovingForward = false;
 
                 neuAusrichten();
             }
@@ -168,36 +173,47 @@ namespace mecanumRobotV2 {
         return null;
     }
 
-    const recentDistances: number[] = [];
+    let recentDistances: number[] = [];
     
     let lastOutlierDistance: number;
     let currentDistanceInCentimeters: number = 0;
 
-    basic.forever(function () {        
+    let isMovingForward = false;
 
-        const currentDistance = entfernungInZentimetern();
-        if (currentDistance == null) {
-            return;
+    control.inBackground(() => {        
+
+        while (true) {
+
+            basic.pause(20);
+
+            let currentDistance = entfernungInZentimetern();
+            const currentAverageDistance = calculateAverage(recentDistances);
+
+            if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
+                currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
+            }
+
+            if (currentDistance == null) {
+                continue;               
+            }
+
+            if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
+                lastOutlierDistance = currentDistance;
+            }
+
+            if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
+                // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
+                continue;
+            }
+
+            recentDistances.push(currentDistance);
+            
+            if (recentDistances.length > 5) {
+                recentDistances.shift();
+            }
+
+            currentDistanceInCentimeters = calculateAverage(recentDistances);
         }
-
-        const currentAverageDistance = calculateAverage(recentDistances);
-
-        if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
-            lastOutlierDistance = currentDistance;
-        }
-
-        if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
-            // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
-            return;
-        }
-
-        recentDistances.push(currentDistance);
-        
-        if (recentDistances.length > 5) {
-            recentDistances.shift();
-        }
-
-        currentDistanceInCentimeters = calculateAverage(recentDistances);
     })
 
     //% block="Mittlere Enternung zum Hindernis"
@@ -218,12 +234,11 @@ namespace mecanumRobotV2 {
         // read echo pulse  max distance : 6m(35000us)  
         const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
         
-        let distanceInCentimeters : number = null;
         if (laufzeitInMilliseconds != 0) {
-            distanceInCentimeters = Math.round(laufzeitInMilliseconds / 58);
+            return Math.round(laufzeitInMilliseconds / 58);
         }
 
-        return distanceInCentimeters >= 5 ? distanceInCentimeters : null;
+        return null;
     }
 
     function calculateAverage(values: number[]): number {
@@ -291,10 +306,6 @@ namespace mecanumRobotV2 {
     function neuAusrichten() {
 
         let maxDistance = 0;
-
-        basic.showString('o');
-        basic.pause(2000);
-
 
         rechtsDrehen(rotationSpeed);
 
