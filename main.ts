@@ -137,6 +137,8 @@ namespace mecanumRobotV2 {
             currentForwardSpeed = adjustedSpeed;
             isMovingForward = true;
 
+            serial.writeLine("speed: " + currentForwardSpeed);
+
             motorenVorwärts(currentForwardSpeed);
 
             // if (currentForwardSpeed <= minimumEngineSpeed) {
@@ -407,7 +409,7 @@ namespace mecanumRobotV2 {
             return 0;
         }
 
-        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 60, 255));
+        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 50, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
