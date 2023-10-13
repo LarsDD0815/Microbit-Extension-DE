@@ -187,20 +187,18 @@ namespace mecanumRobotV2 {
 
         if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
 
-            // const averageOutlierDistance = calculateAverage(recentOutlierDistances);
-            // recentOutlierDistances.push(currentDistance);
+            const averageOutlierDistance = calculateAverage(recentOutlierDistances);
+            recentOutlierDistances.push(currentDistance);
             
-            // if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 0.5) {
+            if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1,5) {
                 
-            //     recentOutlierDistances = [];
-            //     recentDistances = recentOutlierDistances;
-            // }
+                recentOutlierDistances = [];
+                recentDistances = recentOutlierDistances;
+            }
 
-            // if (recentOutlierDistances.length > 4) {
-            //     recentOutlierDistances.shift();
-            // }
-            currentDistanceInCentimeters = -1;
-            return;
+            if (recentOutlierDistances.length > smoothingInvervallSize) {
+                recentOutlierDistances.shift();
+            }
         }
 
         recentDistances.push(currentDistance);
