@@ -180,7 +180,7 @@ namespace mecanumRobotV2 {
 
     let isMovingForward = false;
 
-    basic.forever(function () {   
+    basic.forever(function () {
 
         let currentDistance = entfernungInZentimetern();
         const currentAverageDistance = calculateAverage(recentDistances);
@@ -229,10 +229,10 @@ namespace mecanumRobotV2 {
 
         // read echo pulse  max distance : 6m(35000us)  
         const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
-        
-        if (laufzeitInMilliseconds != 0) {
-            serial.writeLine("." + laufzeitInMilliseconds);
 
+        serial.writeLine("." + laufzeitInMilliseconds);
+
+        if (laufzeitInMilliseconds != 0) {
             return Math.round(laufzeitInMilliseconds / 58);
         }
 
