@@ -180,40 +180,36 @@ namespace mecanumRobotV2 {
 
     let isMovingForward = false;
 
-    control.inBackground(() => {        
+    basic.forever(function () {   
 
-        while (true) {
+        let currentDistance = entfernungInZentimetern();
+        const currentAverageDistance = calculateAverage(recentDistances);
 
-            basic.pause(20);
-
-            let currentDistance = entfernungInZentimetern();
-            const currentAverageDistance = calculateAverage(recentDistances);
-
-            if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
-                currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
-            }
-
-            if (currentDistance == null) {
-                continue;               
-            }
-
-            if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
-                lastOutlierDistance = currentDistance;
-            }
-
-            if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
-                // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
-                continue;
-            }
-
-            recentDistances.push(currentDistance);
-            
-            if (recentDistances.length > 5) {
-                recentDistances.shift();
-            }
-
-            currentDistanceInCentimeters = calculateAverage(recentDistances);
+        if (isMovingForward && currentAverageDistance < 15 && (currentDistance == null || currentDistance > 15)) {
+            currentDistance = 0; // Wertefehler korrigieren, wenn Fahrzeug zu nah am Hindernis steht
         }
+
+        if (currentDistance == null) {
+            return;               
+        }
+
+        if (Math.abs(currentAverageDistance - currentDistance) > currentAverageDistance * 1.15) {
+            lastOutlierDistance = currentDistance;
+        }
+
+        if (Math.abs(currentDistance - lastOutlierDistance) > lastOutlierDistance * 1.15) {
+            // Werte erst berücksichtigen, wenn sich die Messung stabilisiert
+            return;
+        }
+
+        recentDistances.push(currentDistance);
+        
+        if (recentDistances.length > 5) {
+            recentDistances.shift();
+        }
+
+        currentDistanceInCentimeters = calculateAverage(recentDistances);
+        
     })
 
     //% block="Mittlere Enternung zum Hindernis"
