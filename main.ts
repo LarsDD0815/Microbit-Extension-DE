@@ -379,7 +379,7 @@ namespace mecanumRobotV2 {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 10, 50, 15, Math.min(targetSpeed, 40));
+        return Math.map(distanceInCentimeters, 0, 50, 0, Math.min(targetSpeed, 40));
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
