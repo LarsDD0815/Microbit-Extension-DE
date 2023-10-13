@@ -393,6 +393,8 @@ namespace mecanumRobotV2 {
 
         if (distanceInCentimeters > 50) {
             return targetSpeed;
+        } else if (distanceInCentimeters < 10) {
+            return 0;
         }
 
         const maxSpeed = Math.map(distanceInCentimeters, 10, 50, 0, 100);
