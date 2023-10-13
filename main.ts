@@ -8,7 +8,6 @@ enum RotationDirection {
     Left
 }
 
-const autoRouteSpeed = 30;
 const rotationSpeed = 30;
 const minDistanceInCentimeters = 20;
 const distanceMesurementThreshold = 5;
@@ -119,9 +118,10 @@ namespace mecanumRobotV2 {
         i2cWrite(0x08, 0); //M1B
     }
 
-    //% block="Finde den Weg"
+    //% block="Finde den Weg: $speed \\%"
+    //% speed.min=0 speed.max=100
     //% group="Motor"
-    export function folgeWeg() {
+    export function folgeWeg(speed: number) {
 
         let currentForwardSpeed = 0;
 
@@ -130,7 +130,7 @@ namespace mecanumRobotV2 {
             basic.pause(50);
 
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
-            let adjustedSpeed = ermittleGeschwindigkeit(autoRouteSpeed, distanceInCentimeters);
+            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
             
             if (currentForwardSpeed == adjustedSpeed) {
                 continue;
@@ -402,17 +402,21 @@ namespace mecanumRobotV2 {
 
     function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
 
-        if (distanceInCentimeters < 10) {
-            return 0;
-        } else if (distanceInCentimeters > 50) {
+        if (distanceInCentimeters > 50) {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 10, 50, 0, targetSpeed);
+        const maxSpeed = Math.map(distanceInCentimeters, 10, 50, 0, 100);
+
+        return Math.min(targetSpeed, maxSpeed);
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
-        return Math.trunc(Math.map(Math.abs(speed), minimumEngineSpeed, 100, 0, 255));
+        if (speed == 0) {
+            return 0;
+        }
+
+        return Math.trunc(Math.map(Math.abs(speed), 0, 100, 50, 255));
     }
 
     function i2cWrite(reg: number, value: number) {
