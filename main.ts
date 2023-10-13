@@ -300,7 +300,7 @@ namespace mecanumRobotV2 {
 
         let start = input.runningTime();
 
-        while (input.runningTime() < start + 2000) {
+        while (input.runningTime() < start + 4000) {
 
             basic.pause(50);
 
