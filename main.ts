@@ -137,12 +137,19 @@ namespace mecanumRobotV2 {
             }
 
             currentForwardSpeed = adjustedSpeed;
-            if (adjustedSpeed <= minimumEngineSpeed) {
-                motorenAnhalten();
-                //neuAusrichten();
-            }
 
-            motorenVorwärts(adjustedSpeed);         
+            motorenVorwärts(currentForwardSpeed);         
+
+            if (currentForwardSpeed <= minimumEngineSpeed) {
+                motorenAnhalten();
+
+                currentForwardSpeed = 0;
+
+                basic.showString("_")
+                basic.pause(3000);
+
+                neuAusrichten();
+            }
         }
     }
 
@@ -380,7 +387,7 @@ namespace mecanumRobotV2 {
             return targetSpeed;
         }
 
-        return Math.map(distanceInCentimeters, 0, 50, 0, Math.min(targetSpeed, 40));
+        return Math.map(distanceInCentimeters, 10, 50, minimumEngineSpeed, Math.min(targetSpeed, 30));
     }
 
     function konvertiereInMotorSteuerwert(speed: number) {
