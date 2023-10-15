@@ -330,7 +330,7 @@ namespace mecanumRobotV2 {
     //% group="Servo" weight=70
     //% angle.min=-90 angle.max.max=90
     export function setServo(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle)
+        pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
 
     function motorVorneRechts(engineRotationDirection: TurnWheels, speed: number) {
