@@ -252,8 +252,12 @@ namespace mecanumRobotV2 {
 
         const targetAngle = ermittleNeueZielrichtung();
         
+        basic.showNumber(targetAngle);
+        basic.pause(5000);
+
         while (Math.abs(input.compassHeading() - targetAngle) > targetAngleThreshold) {
             rechtsDrehen(rotationSpeed);
+            basic.showNumber(input.compassHeading());
         }
 
         motorenAnhalten();
@@ -291,6 +295,8 @@ namespace mecanumRobotV2 {
         } else if (targetAngle < 0) {
             targetAngle += 360;
         }
+
+        setServo(servoAusschlagMitMaximalerEnternungZumHindernis);
 
         return targetAngle;
     }
