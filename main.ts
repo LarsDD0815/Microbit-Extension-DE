@@ -245,29 +245,23 @@ namespace mecanumRobotV2 {
         return Math.round(sumOfValues / values.length);
     }
 
-    function findeNeueRichtung_servo() {
+    //% block="teste richtungsssuche"
+    //% group="Servo"
+    export function findeNeueRichtung_servo() {
 
         setServo(0);
 
         let compassAngle = input.compassHeading();
 
-        basic.showNumber(compassAngle);
-        basic.pause(5000);
-
         let maximaleEnternungZumHindernis = 0;
         let servoAusschlagMitMaximalerEnternungZumHindernis = -180; // Umdrehen
-        for (let servoAusschlag = -90; servoAusschlag <= 90; servoAusschlag++) {
+        for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
             
-            basic.showNumber(servoAusschlag);
-            basic.pause(100);
-
             setServo(servoAusschlag);
 
-            const entfernungZumHindernis = aktuelleEntfernungInZentimetern()
-            if (entfernungZumHindernis <= minDistanceInCentimeters) {
-                continue;
-            }
+            basic.pause(30);
 
+            const entfernungZumHindernis = aktuelleEntfernungInZentimetern();
             
             if (entfernungZumHindernis <= maximaleEnternungZumHindernis) {
                 continue;
@@ -326,9 +320,9 @@ namespace mecanumRobotV2 {
     }
 
    
-    //% block="set servo to angle %angle"
-    //% group="Servo" weight=70
-    //% angle.min=-90 angle.max.max=90
+    //% block="Servo einstellen auf %angle"
+    //% group="Servo"
+    //% angle.min=-80 angle.max.max=80
     export function setServo(angle: number): void {
         pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
