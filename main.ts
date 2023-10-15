@@ -280,6 +280,8 @@ namespace mecanumRobotV2 {
             targetAngle += 360;
         }
 
+        setServo(servoAusschlagMitMaximalerEnternungZumHindernis);
+
         basic.showNumber(targetAngle);
         basic.pause(5000)
 
