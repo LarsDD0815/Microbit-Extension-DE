@@ -283,7 +283,7 @@ namespace mecanumRobotV2 {
         basic.showNumber(targetAngle);
         basic.pause(5000)
 
-        return targetAngle;
+        
     }
 
     function neuAusrichten() {
