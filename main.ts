@@ -12,6 +12,7 @@ const rotationSpeed = 3;
 const minDistanceInCentimeters = 15;
 const distanceMesurementThreshold = 15;
 const minimumEngineSpeed = 20;
+const targetAngleThreshold = 3;
 
 let currentSpeed = 0;
 
@@ -245,9 +246,20 @@ namespace mecanumRobotV2 {
         return Math.round(sumOfValues / values.length);
     }
 
-    //% block="teste richtungsssuche"
+     //% block="test neuausrichten"
     //% group="Servo"
-    export function findeNeueRichtung_servo() {
+    export function neuAusrichten() {
+
+        const targetAngle = ermittleNeueZielrichtung();
+        
+        while (Math.abs(input.compassHeading() - targetAngle) > targetAngleThreshold) {
+            rechtsDrehen(rotationSpeed);
+        }
+
+        motorenAnhalten();
+    }
+
+    function ermittleNeueZielrichtung() {
 
         setServo(0);
 
@@ -259,7 +271,7 @@ namespace mecanumRobotV2 {
             
             setServo(servoAusschlag);
 
-            basic.pause(30);
+            basic.pause(50);
 
             const entfernungZumHindernis = aktuelleEntfernungInZentimetern();
             
@@ -280,48 +292,9 @@ namespace mecanumRobotV2 {
             targetAngle += 360;
         }
 
-        setServo(servoAusschlagMitMaximalerEnternungZumHindernis);
-
-        basic.showNumber(targetAngle);
-        basic.pause(5000)
-
-        
+        return targetAngle;
     }
 
-    function neuAusrichten() {
-
-        let maxDistance = 0;
-
-        rechtsDrehen(rotationSpeed);
-
-        let start = input.runningTime();
-
-        while (input.runningTime() < start + 4000) {
-
-            basic.pause(50);
-
-            const currentDistance = aktuelleEntfernungInZentimetern();
-
-            if (currentDistance > maxDistance) {
-                maxDistance = currentDistance;
-            }
-        }
-
-        linksDrehen(rotationSpeed);
-
-        while (true) {
-
-            basic.pause(50);
-
-            const currentDistance = aktuelleEntfernungInZentimetern();
-
-            if (Math.abs(maxDistance - currentDistance) < distanceMesurementThreshold) {
-                break;
-            }
-        }
-    }
-
-   
     //% block="Servo einstellen auf %angle"
     //% group="Servo"
     //% angle.min=-80 angle.max.max=80
