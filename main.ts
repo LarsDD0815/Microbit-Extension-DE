@@ -8,7 +8,7 @@ enum RotationDirection {
     Left
 }
 
-const rotationSpeed = 2;
+const rotationSpeed = 1;
 const minDistanceInCentimeters = 15;
 const distanceMesurementThreshold = 15;
 const minimumEngineSpeed = 20;
@@ -252,12 +252,8 @@ namespace mecanumRobotV2 {
 
         const targetAngle = ermittleNeueZielrichtung();
         
-        basic.showNumber(targetAngle);
-        basic.pause(5000);
-
         while (Math.abs(input.compassHeading() - targetAngle) > targetAngleThreshold) {
             rechtsDrehen(rotationSpeed);
-            basic.showNumber(input.compassHeading());
         }
 
         motorenAnhalten();
