@@ -12,7 +12,7 @@ const rotationSpeed = 3;
 const minDistanceInCentimeters = 15;
 const distanceMesurementThreshold = 15;
 const minimumEngineSpeed = 20;
-const targetAngleThreshold = 3;
+const targetAngleThreshold = 10;
 
 let currentSpeed = 0;
 
