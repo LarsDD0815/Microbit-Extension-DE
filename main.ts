@@ -202,7 +202,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(currentCompassHeading - modifiedTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            basic.pause(50);
         }
 
         motorenAnhalten();
@@ -210,7 +210,7 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
-        const initialAngle = currentCompassHeading;
+        const initialAngle = input.compassHeading();
 
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
@@ -218,22 +218,22 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(currentCompassHeading - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            basic.pause(50);
         }
 
         motorenAnhalten();     
 
-        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance();
+        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
 
         rechtsDrehen(rotationSpeed);
         
         while (Math.abs(currentCompassHeading - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            basic.pause(50);
         }
 
         motorenAnhalten();
 
-        const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance();
+        const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
         if ((angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
             return adjustTargetAngle(initialAngle - 180);
@@ -251,13 +251,11 @@ namespace mecanumRobotV2 {
         dinstance: number;
     }
 
-    function determineAngleWithMaximumDistance() : AngleToDistanceMapping {
+    function determineAngleWithMaximumDistance(initialAngle : number) : AngleToDistanceMapping {
 
         const angleWithMaximumDistance = new AngleToDistanceMapping();
 
         setServoAngle(0);
-
-        let servoMesurementInitialAngle = input.compassHeading();
 
         for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
             
@@ -272,7 +270,7 @@ namespace mecanumRobotV2 {
             }
                
             angleWithMaximumDistance.dinstance = entfernungZumHindernis;
-            angleWithMaximumDistance.angle = adjustTargetAngle(servoMesurementInitialAngle + servoAusschlag);
+            angleWithMaximumDistance.angle = adjustTargetAngle(initialAngle + servoAusschlag);
         }
 
         setServoAngle(0);
