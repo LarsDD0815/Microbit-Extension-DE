@@ -268,25 +268,25 @@ namespace mecanumRobotV2 {
         const leftTargetAngle = adjustTargetAngle(compassAngle - 90);
         const rightTargetAngle = adjustTargetAngle(compassAngle + 90);
 
-        linksDrehen(rotationSpeed);
+        rechtsDrehen(rotationSpeed);
+
+        while (Math.abs(input.compassHeading() - rightTargetAngle) > targetAngleThreshold) {
+            basic.pause(100);
+        }
+
+        motorenAnhalten();     
+
+        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance();
+
+        rechtsDrehen(rotationSpeed);
         
         while (Math.abs(input.compassHeading() - leftTargetAngle) > targetAngleThreshold) {
-            //basic.pause(100);
+            basic.pause(100);
         }
 
         motorenAnhalten();
 
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance();
-
-        rechtsDrehen(rotationSpeed);
-
-        while (Math.abs(input.compassHeading() - rightTargetAngle) > targetAngleThreshold) {
-           // basic.pause(100);
-        }
-
-        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance();
-
-        motorenAnhalten();     
 
         if ((angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
             return adjustTargetAngle(compassAngle - 180);
