@@ -285,8 +285,6 @@ namespace mecanumRobotV2 {
             servoAusschlagMitMaximalerEnternungZumHindernis = servoAusschlag;
         }
 
-        setServo(0);
-
         let targetAngle = compassAngle + servoAusschlagMitMaximalerEnternungZumHindernis;
         if (targetAngle > 360) {
             targetAngle -= 360;
@@ -294,7 +292,7 @@ namespace mecanumRobotV2 {
             targetAngle += 360;
         }
 
-        setServo(servoAusschlagMitMaximalerEnternungZumHindernis);
+        setServo(0);
 
         return targetAngle;
     }
