@@ -252,8 +252,10 @@ namespace mecanumRobotV2 {
 
         const targetAngle = ermittleNeueZielrichtung();
         
+        rechtsDrehen(rotationSpeed);
+
         while (Math.abs(input.compassHeading() - targetAngle) > targetAngleThreshold) {
-            rechtsDrehen(rotationSpeed);
+            basic.pause(50);
         }
 
         motorenAnhalten();
