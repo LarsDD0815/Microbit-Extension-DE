@@ -263,46 +263,30 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
-        let compassAngle = input.compassHeading();
-
-        basic.showNumber(compassAngle);
-        basic.pause(5000);
-
+        const compassAngle = input.compassHeading();
 
         const leftTargetAngle = adjustTargetAngle(compassAngle - 90);
         const rightTargetAngle = adjustTargetAngle(compassAngle + 90);
 
-        basic.showNumber(leftTargetAngle);
-        basic.pause(5000);
-
         linksDrehen(rotationSpeed);
-
+        
         while (Math.abs(input.compassHeading() - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+            //basic.pause(100);
         }
 
         motorenAnhalten();
 
-        basic.pause(5000);
-
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance();
-
-        basic.pause(5000);
-
 
         rechtsDrehen(rotationSpeed);
 
-        basic.pause(5000);
-
         while (Math.abs(input.compassHeading() - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+           // basic.pause(100);
         }
 
         const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance();
 
         motorenAnhalten();     
-
-        basic.pause(5000);
 
         if ((angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
             return adjustTargetAngle(compassAngle - 180);
