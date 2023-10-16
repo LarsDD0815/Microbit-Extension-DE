@@ -423,4 +423,6 @@ namespace mecanumRobotV2 {
         buf[1] = engineSpeedValue
         pins.i2cWriteBuffer(0x30, buf)
     }
+
+    setServoAngle(0);
 }
