@@ -170,9 +170,9 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function folgeWeg(speed: number) {
 
-        let currentForwardSpeed = 0;
-
         control.inBackground(() => {
+
+            let currentForwardSpeed = 0;
 
             while (true) {
 
