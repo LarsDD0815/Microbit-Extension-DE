@@ -276,9 +276,12 @@ namespace mecanumRobotV2 {
 
         motorenAnhalten();
 
-        basic.pause(50);
+        basic.pause(5000);
 
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance();
+
+        basic.pause(5000);
+
 
         rechtsDrehen(rotationSpeed);
 
