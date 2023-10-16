@@ -131,7 +131,7 @@ namespace mecanumRobotV2 {
             let distanceInCentimeters = aktuelleEntfernungInZentimetern();
             let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
             
-            if (currentForwardSpeed == adjustedSpeed) {
+            if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
                 return;
             }
 
@@ -263,12 +263,55 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
+        let compassAngle = input.compassHeading();
+
+        const leftTargetAngle = adjustTargetAngle(compassAngle - 90);
+        const rightTargetAngle = adjustTargetAngle(compassAngle + 90);
+
+        linksDrehen(rotationSpeed);
+
+        while (Math.abs(input.compassHeading() - leftTargetAngle) > targetAngleThreshold) {
+            basic.pause(50);
+        }
+
+        motorenAnhalten();
+
+        const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance();
+
+        rechtsDrehen(rotationSpeed);
+
+        while (Math.abs(input.compassHeading() - rightTargetAngle) > targetAngleThreshold) {
+            basic.pause(50);
+        }
+
+        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance();
+
+        motorenAnhalten();     
+
+        if ((angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
+            return adjustTargetAngle(compassAngle - 180);
+        } else if (angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters){
+            return angleWithMaximumDistanceRight.angle;
+        } else if (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters) {
+            return angleWithMaximumDistanceLeft.angle;
+        } else {
+            return angleWithMaximumDistanceLeft.dinstance >= angleWithMaximumDistanceRight.dinstance ? angleWithMaximumDistanceLeft.angle : angleWithMaximumDistanceRight.angle;
+        }
+    }
+
+    class AngleToDistanceMapping {
+        angle: number;
+        dinstance: number;
+    }
+
+    function determineAngleWithMaximumDistance() : AngleToDistanceMapping {
+
+        const angleWithMaximumDistance = new AngleToDistanceMapping();
+
         setServo(0);
 
         let compassAngle = input.compassHeading();
 
-        let maximaleEnternungZumHindernis = 0;
-        let servoAusschlagMitMaximalerEnternungZumHindernis = -180; // Umdrehen
         for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
             
             setServo(servoAusschlag);
@@ -277,26 +320,30 @@ namespace mecanumRobotV2 {
 
             const entfernungZumHindernis = aktuelleEntfernungInZentimetern();
             
-            if (entfernungZumHindernis <= maximaleEnternungZumHindernis) {
+            if (entfernungZumHindernis <= angleWithMaximumDistance.dinstance) {
                 continue;
             }
                
-            maximaleEnternungZumHindernis = entfernungZumHindernis;
-            servoAusschlagMitMaximalerEnternungZumHindernis = servoAusschlag;
+            angleWithMaximumDistance.dinstance = entfernungZumHindernis;
+            angleWithMaximumDistance.angle = adjustTargetAngle(compassAngle + servoAusschlag);
         }
 
-        let targetAngle = compassAngle + servoAusschlagMitMaximalerEnternungZumHindernis;
+        setServo(0);
+
+        return angleWithMaximumDistance;
+    }
+
+    function adjustTargetAngle(angle: number): number {
+        let targetAngle = angle;
+        
         if (targetAngle > 360) {
             targetAngle -= 360;
         } else if (targetAngle < 0) {
             targetAngle += 360;
         }
 
-        setServo(0);
-
         return targetAngle;
     }
-
     //% block="Servo einstellen auf %angle"
     //% group="Servo"
     //% angle.min=-80 angle.max.max=80
