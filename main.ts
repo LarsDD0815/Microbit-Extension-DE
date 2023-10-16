@@ -170,28 +170,33 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function folgeWeg(speed: number) {
 
-        basic.forever(function () {
+        control.inBackground(function() {
 
-            let currentForwardSpeed = 0;
+            while (true) {
 
-            let distanceInCentimeters = aktuelleEntfernungInZentimetern();
-            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+                basic.pause(20);
+
+                let currentForwardSpeed = 0;
+
+                let distanceInCentimeters = aktuelleEntfernungInZentimetern();
+                let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
         
-            if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
-                return;
-            }
+                if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
+                    return;
+                }
 
-            currentForwardSpeed = adjustedSpeed;
+                currentForwardSpeed = adjustedSpeed;
 
-            if (currentForwardSpeed > 0) {
-                motorenVorwärts(currentForwardSpeed);
-            } else {
-                motorenAnhalten();
+                if (currentForwardSpeed > 0) {
+                    motorenVorwärts(currentForwardSpeed);
+                } else {
+                    motorenAnhalten();
 
-                currentForwardSpeed = 0;
+                    currentForwardSpeed = 0;
 
-                neuAusrichten();
-            }            
+                    neuAusrichten();
+                }
+            }    
         });
     }
 
