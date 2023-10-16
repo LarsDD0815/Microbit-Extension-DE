@@ -1,47 +1,93 @@
-enum TurnWheels {
-    Forward = 0,
-    Backwards = 1
-}
-
-enum RotationDirection {
-    Right,
-    Left
-}
-
-const rotationSpeed = 2;
-const minDistanceInCentimeters = 15;
-const distanceMesurementThreshold = 15;
-const minimumEngineSpeed = 20;
-const targetAngleThreshold = 10;
-
-let currentSpeed = 0;
-
-enum LineTrackingSensor {
-    //% block="links"
-    Left,
-    //% block="mitte"
-    Center,
-    //% block="rechts"
-    Right
-
-}
-enum LED {
-    //% block="links"
-    Left = 0x09,
-    //% block="rechts"
-    Right = 0x0a
-}
-enum LEDColor {
-    //% block=Regenbogen
-    Rainbow = 4095,
-    //% block=aus
-    Off = 0
-}
-
-
 //% color="#ff6800" icon="\uf1b9" weight=15
 //% groups="['Motor', 'Servo', 'LED', 'Sensor']"
 namespace mecanumRobotV2 {
+
+    const rotationSpeed = 2;
+    const minDistanceInCentimeters = 15;
+    const targetAngleThreshold = 10;
+    const smoothingInvervallSize = 5;
+
+    let recentDistances: number[] = [];    
+    let recentOutlierDistances: number[] = [];
+
+    let currentCompassHeading: number = 0;
+    let currentDistanceInCentimeters: number = 0;
+
+    enum TurnWheels {
+        Forward = 0,
+        Backwards = 1
+    }
+        
+    enum LineTrackingSensor {
+        //% block="links"
+        Left,
+        //% block="mitte"
+        Center,
+        //% block="rechts"
+        Right
+    
+    }
+
+    enum LED {
+        //% block="links"
+        Left = 0x09,
+        //% block="rechts"
+        Right = 0x0a
+    }
+
+    enum LEDColor {
+        //% block=Regenbogen
+        Rainbow = 4095,
+        //% block=aus
+        Off = 0
+    }
+
+    control.inBackground(() => {
+
+        while (true) {
+
+            basic.pause(20);
+
+            currentCompassHeading = input.compassHeading();
+
+            const currentDistance = messureCurrentDistance();
+            const currentAverageDistance = calculateAverage(recentDistances);
+
+            if (currentDistance == null) {
+                continue;
+            }
+
+            if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
+
+                const averageOutlierDistance = calculateAverage(recentOutlierDistances);
+                recentOutlierDistances.push(currentDistance);
+                
+                if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1, 5) {
+                    
+                    recentOutlierDistances = [];
+                    recentDistances = recentOutlierDistances;
+                }
+
+                if (recentOutlierDistances.length > smoothingInvervallSize) {
+                    recentOutlierDistances.shift();
+                }
+            }
+
+            recentDistances.push(currentDistance);
+            
+            if (recentDistances.length > smoothingInvervallSize) {
+                recentDistances.shift();
+            }
+
+            currentDistanceInCentimeters = calculateAverage(recentDistances);
+        }
+    })
+
+    //% block="Enternung zum Hindernis"
+    //% group="Sensor"
+    export function aktuelleEntfernungInZentimetern(): number {
+        return currentDistanceInCentimeters;
+    }
 
     //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte"
     //% group="Motor"
@@ -109,14 +155,14 @@ namespace mecanumRobotV2 {
     //% block="Motor anhalten"
     //% group="Motor"
     export function motorenAnhalten() {
-        i2cWrite(0x01, 0); //M1A
-        i2cWrite(0x02, 0); //M1B
-        i2cWrite(0x03, 0); //M1A
-        i2cWrite(0x04, 0); //M1B
-        i2cWrite(0x05, 0); //M1A
-        i2cWrite(0x06, 0); //M1B
-        i2cWrite(0x07, 0); //M1A
-        i2cWrite(0x08, 0); //M1B
+        setEngineSpeedValue(0x01, 0); //M1A
+        setEngineSpeedValue(0x02, 0); //M1B
+        setEngineSpeedValue(0x03, 0); //M1A
+        setEngineSpeedValue(0x04, 0); //M1B
+        setEngineSpeedValue(0x05, 0); //M1A
+        setEngineSpeedValue(0x06, 0); //M1B
+        setEngineSpeedValue(0x07, 0); //M1A
+        setEngineSpeedValue(0x08, 0); //M1B
     }
 
     //% block="Finde den Weg: $speed \\%"
@@ -126,136 +172,42 @@ namespace mecanumRobotV2 {
 
         let currentForwardSpeed = 0;
 
-        basic.forever(function () {
+        control.inBackground(() => {
 
-            let distanceInCentimeters = aktuelleEntfernungInZentimetern();
-            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+            while (true) {
+
+                basic.pause(50);
+
+                let distanceInCentimeters = aktuelleEntfernungInZentimetern();
+                let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
             
-            if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
-                return;
-            }
+                if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
+                    return;
+                }
 
-            currentForwardSpeed = adjustedSpeed;
+                currentForwardSpeed = adjustedSpeed;
 
-            if (currentForwardSpeed > 0) {
-                motorenVorwärts(currentForwardSpeed);
-            } else {
-                motorenAnhalten();
+                if (currentForwardSpeed > 0) {
+                    motorenVorwärts(currentForwardSpeed);
+                } else {
+                    motorenAnhalten();
 
-                currentForwardSpeed = 0;
+                    currentForwardSpeed = 0;
 
-                neuAusrichten();
+                    neuAusrichten();
+                }
             }
         });
     }
 
-    //% block="Liniensensor $sensor"
-    //% group="Sensor"
-    export function LineTracking(sensor: LineTrackingSensor) {
-
-        switch (sensor) {
-            case LineTrackingSensor.Left:
-                return pins.digitalReadPin(DigitalPin.P3);
-            case LineTrackingSensor.Right:
-                return pins.digitalReadPin(DigitalPin.P10);
-            case LineTrackingSensor.Center:
-                return pins.digitalReadPin(DigitalPin.P4);
-        }
-
-        return null;
-    }
-
-    const smoothingInvervallSize = 5;
-
-    let recentDistances: number[] = [];    
-    let recentOutlierDistances: number[] = [];
-
-    let currentDistanceInCentimeters: number = 0;
-
-    basic.forever(function () {
-
-        const currentDistance = entfernungInZentimetern();
-        const currentAverageDistance = calculateAverage(recentDistances);
-
-        if (currentDistance == null) {
-            return;               
-        }
-
-        if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
-
-            const averageOutlierDistance = calculateAverage(recentOutlierDistances);
-            recentOutlierDistances.push(currentDistance);
-            
-            if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1,5) {
-                
-                recentOutlierDistances = [];
-                recentDistances = recentOutlierDistances;
-            }
-
-            if (recentOutlierDistances.length > smoothingInvervallSize) {
-                recentOutlierDistances.shift();
-            }
-        }
-
-        recentDistances.push(currentDistance);
-        
-        if (recentDistances.length > smoothingInvervallSize) {
-            recentDistances.shift();
-        }
-
-        currentDistanceInCentimeters = calculateAverage(recentDistances);        
-    })
-
-    //% block="Mittlere Enternung zum Hindernis"
-    //% group="Sensor"
-    export function aktuelleEntfernungInZentimetern(): number {
-        return currentDistanceInCentimeters;
-    }
-
-    function entfernungInZentimetern(): number {
-
-        pins.setPull(DigitalPin.P15, PinPullMode.PullNone);
-        pins.digitalWritePin(DigitalPin.P15, 0)
-        control.waitMicros(2);
-        pins.digitalWritePin(DigitalPin.P15, 1)
-        control.waitMicros(10);
-        pins.digitalWritePin(DigitalPin.P15, 0)
-
-        // read echo pulse  max distance : 6m(35000us)  
-        const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 35000);
-
-        if (laufzeitInMilliseconds != 0) {
-            return Math.round(laufzeitInMilliseconds / 58);
-        }
-
-        return null;
-    }
-
-    function calculateAverage(values: number[]): number {
- 
-        if (values.length == 0) {
-            return 0;
-        }
- 
-        let sumOfValues = 0;
- 
-        values.forEach(function (value, idx) {
-            sumOfValues += value;
-        });
-
-        return Math.round(sumOfValues / values.length);
-    }
-
-     //% block="test neuausrichten"
-    //% group="Servo"
-    export function neuAusrichten() {
+    function neuAusrichten() {
 
         const modifiedTargetAngle = ermittleNeueZielrichtung();
         
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(input.compassHeading() - modifiedTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(currentCompassHeading - modifiedTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();
@@ -263,15 +215,15 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
-        const initialAngle = input.compassHeading();
+        const initialAngle = currentCompassHeading;
 
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
 
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(input.compassHeading() - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(currentCompassHeading - rightTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();     
@@ -280,8 +232,8 @@ namespace mecanumRobotV2 {
 
         rechtsDrehen(rotationSpeed);
         
-        while (Math.abs(input.compassHeading() - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(currentCompassHeading - leftTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();
@@ -308,13 +260,13 @@ namespace mecanumRobotV2 {
 
         const angleWithMaximumDistance = new AngleToDistanceMapping();
 
-        setServo(0);
+        setServoAngle(0);
 
         let servoMesurementInitialAngle = input.compassHeading();
 
         for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
             
-            setServo(servoAusschlag);
+            setServoAngle(servoAusschlag);
 
             basic.pause(50);
 
@@ -328,7 +280,7 @@ namespace mecanumRobotV2 {
             angleWithMaximumDistance.angle = adjustTargetAngle(servoMesurementInitialAngle + servoAusschlag);
         }
 
-        setServo(0);
+        setServoAngle(0);
 
         return angleWithMaximumDistance;
     }
@@ -344,73 +296,6 @@ namespace mecanumRobotV2 {
 
         return targetAngle;
     }
-    //% block="Servo einstellen auf %angle"
-    //% group="Servo"
-    //% angle.min=-80 angle.max.max=80
-    export function setServo(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle + 90)
-    }
-
-    function motorVorneRechts(engineRotationDirection: TurnWheels, speed: number) {
-
-        if (engineRotationDirection == 0) {
-            i2cWrite(0x01, 0); //M2A
-            i2cWrite(0x02, konvertiereInMotorSteuerwert(speed)); //M2B
-        } else if (engineRotationDirection == 1) {
-            i2cWrite(0x01, konvertiereInMotorSteuerwert(speed)); //M2A
-            i2cWrite(0x02, 0); //M2B
-        }
-    }
-
-    function motorVorneLinks(engineRotationDirection: TurnWheels, speed: number) {
-
-        if (engineRotationDirection == 0) {
-            i2cWrite(0x03, 0); //M2A
-            i2cWrite(0x04, konvertiereInMotorSteuerwert(speed)); //M2B
-        } else if (engineRotationDirection == 1) {
-            i2cWrite(0x03, konvertiereInMotorSteuerwert(speed)); //M2A
-            i2cWrite(0x04, 0); //M2B
-        }
-    }
-
-    function motorHintenLinks(engineRotationDirection: TurnWheels, speed: number) {
-
-        if (engineRotationDirection == 0) {
-            i2cWrite(0x07, 0); //M2A
-            i2cWrite(0x08, konvertiereInMotorSteuerwert(speed)); //M2B
-        } else if (engineRotationDirection == 1) {
-            i2cWrite(0x07, konvertiereInMotorSteuerwert(speed)); //M2A
-            i2cWrite(0x08, 0); //M2B
-        }
-    }
-
-    function motorHintenRechts(engineRotationDirection: TurnWheels, speed: number) {
-
-        if (engineRotationDirection == 0) {
-            i2cWrite(0x05, 0); //M2A
-            i2cWrite(0x06, konvertiereInMotorSteuerwert(speed)); //M2B
-        } else if (engineRotationDirection == 1) {
-            i2cWrite(0x05, konvertiereInMotorSteuerwert(speed)); //M2A
-            i2cWrite(0x06, 0); //M2B
-        }
-    }
-
-    function stelleMotor(adresse1: number, adresse2: number, speed: number, distanceInCentimeters : number) {
-        
-        if (speed == 0) {
-            i2cWrite(adresse1, 0);
-            i2cWrite(adresse2, 0);
-        } else if (speed > 0) {
-
-            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
-
-            i2cWrite(adresse1, 0);
-            i2cWrite(adresse2, konvertiereInMotorSteuerwert(adjustedSpeed));
-        } else {
-            i2cWrite(adresse2, 0);
-            i2cWrite(adresse1, konvertiereInMotorSteuerwert(speed));
-        }
-    }
 
     function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
 
@@ -425,7 +310,102 @@ namespace mecanumRobotV2 {
         return Math.min(targetSpeed, maxSpeed);
     }
 
-    function konvertiereInMotorSteuerwert(speed: number) {
+    function messureCurrentDistance(): number {
+
+        pins.setPull(DigitalPin.P15, PinPullMode.PullNone);
+        pins.digitalWritePin(DigitalPin.P15, 0)
+        control.waitMicros(2);
+        pins.digitalWritePin(DigitalPin.P15, 1)
+        control.waitMicros(10);
+        pins.digitalWritePin(DigitalPin.P15, 0)
+
+        // Puls-Laufzeit für Schallgescwindigkeit bei einer Maximalen Mess-Entfernung von 3 m > 1s/340m*(2 * 3m) > 0,01764705882s
+        const laufzeitInMilliseconds = pins.pulseIn(DigitalPin.P16, PulseValue.High, 18000);
+
+        if (laufzeitInMilliseconds != 0) {
+            return Math.round(laufzeitInMilliseconds / 58);
+        }
+
+        return null;
+    }
+
+    function calculateAverage(values: number[]): number {
+ 
+        if (values.length == 0) {
+            return 0;
+        }
+ 
+        let sumOfValues = 0;
+ 
+        values.forEach(function (value, idx) {
+            sumOfValues += value;
+        });
+
+        return Math.round(sumOfValues / values.length);
+    }
+
+    function motorVorneRechts(engineRotationDirection: TurnWheels, speed: number) {
+
+        if (engineRotationDirection == 0) {
+            setEngineSpeedValue(0x01, 0); //M2A
+            setEngineSpeedValue(0x02, convertToEngineSpeedValue(speed)); //M2B
+        } else if (engineRotationDirection == 1) {
+            setEngineSpeedValue(0x01, convertToEngineSpeedValue(speed)); //M2A
+            setEngineSpeedValue(0x02, 0); //M2B
+        }
+    }
+
+    function motorVorneLinks(engineRotationDirection: TurnWheels, speed: number) {
+
+        if (engineRotationDirection == 0) {
+            setEngineSpeedValue(0x03, 0); //M2A
+            setEngineSpeedValue(0x04, convertToEngineSpeedValue(speed)); //M2B
+        } else if (engineRotationDirection == 1) {
+            setEngineSpeedValue(0x03, convertToEngineSpeedValue(speed)); //M2A
+            setEngineSpeedValue(0x04, 0); //M2B
+        }
+    }
+
+    function motorHintenLinks(engineRotationDirection: TurnWheels, speed: number) {
+
+        if (engineRotationDirection == 0) {
+            setEngineSpeedValue(0x07, 0); //M2A
+            setEngineSpeedValue(0x08, convertToEngineSpeedValue(speed)); //M2B
+        } else if (engineRotationDirection == 1) {
+            setEngineSpeedValue(0x07, convertToEngineSpeedValue(speed)); //M2A
+            setEngineSpeedValue(0x08, 0); //M2B
+        }
+    }
+
+    function motorHintenRechts(engineRotationDirection: TurnWheels, speed: number) {
+
+        if (engineRotationDirection == 0) {
+            setEngineSpeedValue(0x05, 0); //M2A
+            setEngineSpeedValue(0x06, convertToEngineSpeedValue(speed)); //M2B
+        } else if (engineRotationDirection == 1) {
+            setEngineSpeedValue(0x05, convertToEngineSpeedValue(speed)); //M2A
+            setEngineSpeedValue(0x06, 0); //M2B
+        }
+    }
+
+    function stelleMotor(engineRegister1: number, engineRegister2: number, speed: number, distanceInCentimeters : number) {
+        
+        if (speed == 0) {
+            setEngineSpeedValue(engineRegister1, 0);
+            setEngineSpeedValue(engineRegister2, 0);
+        } else if (speed > 0) {
+
+            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+
+            setEngineSpeedValue(engineRegister1, 0);
+            setEngineSpeedValue(engineRegister2, convertToEngineSpeedValue(adjustedSpeed));
+        } else {
+            setEngineSpeedValue(engineRegister2, 0);
+            setEngineSpeedValue(engineRegister1, convertToEngineSpeedValue(speed));
+        }
+    }
+
+    function convertToEngineSpeedValue(speed: number) {
         if (speed == 0) {
             return 0;
         }
@@ -433,10 +413,14 @@ namespace mecanumRobotV2 {
         return Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255));
     }
 
-    function i2cWrite(reg: number, value: number) {
+    function setServoAngle(angle: number): void {
+        pins.servoWritePin(AnalogPin.P14, angle + 90)
+    }
+
+    function setEngineSpeedValue(engineRegister: number, engineSpeedValue: number) {
         let buf = pins.createBuffer(2)
-        buf[0] = reg
-        buf[1] = value
+        buf[0] = engineRegister
+        buf[1] = engineSpeedValue
         pins.i2cWriteBuffer(0x30, buf)
     }
 }
