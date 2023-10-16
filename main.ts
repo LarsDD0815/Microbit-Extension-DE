@@ -42,7 +42,7 @@ namespace mecanumRobotV2 {
         Off = 0
     }
 
-    control.inBackground(() => {
+    control.inBackground(function() {
 
         while (true) {
 
@@ -170,7 +170,7 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function folgeWeg(speed: number) {
 
-        control.inBackground(() => {
+        control.inBackground(function() {
 
             let currentForwardSpeed = 0;
 
