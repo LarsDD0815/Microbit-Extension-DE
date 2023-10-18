@@ -42,51 +42,71 @@ namespace mecanumRobotV2 {
         Off = 0
     }
 
-    control.inBackground(function() {
+    // control.inBackground(function() {
 
-        while (true) {
+    //     while (true) {
 
-            basic.pause(20);
+    //         basic.pause(20);
 
-            currentCompassHeading = input.compassHeading();
+    //         currentCompassHeading = input.compassHeading();
 
-            const currentDistance = messureCurrentDistance();
-            const currentAverageDistance = calculateAverage(recentDistances);
+    //         const currentDistance = messureCurrentDistance();
+    //         const currentAverageDistance = calculateAverage(recentDistances);
 
-            if (currentDistance == null) {
-                continue;
-            }
+    //         if (currentDistance == null) {
+    //             continue;
+    //         }
 
-            if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
+    //         if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
 
-                const averageOutlierDistance = calculateAverage(recentOutlierDistances);
-                recentOutlierDistances.push(currentDistance);
+    //             const averageOutlierDistance = calculateAverage(recentOutlierDistances);
+    //             recentOutlierDistances.push(currentDistance);
                 
-                if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1, 5) {
+    //             if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1, 5) {
                     
-                    recentOutlierDistances = [];
-                    recentDistances = recentOutlierDistances;
-                }
+    //                 recentOutlierDistances = [];
+    //                 recentDistances = recentOutlierDistances;
+    //             }
 
-                if (recentOutlierDistances.length > smoothingInvervallSize) {
-                    recentOutlierDistances.shift();
-                }
-            }
+    //             if (recentOutlierDistances.length > smoothingInvervallSize) {
+    //                 recentOutlierDistances.shift();
+    //             }
+    //         }
 
-            recentDistances.push(currentDistance);
+    //         recentDistances.push(currentDistance);
             
-            if (recentDistances.length > smoothingInvervallSize) {
-                recentDistances.shift();
-            }
+    //         if (recentDistances.length > smoothingInvervallSize) {
+    //             recentDistances.shift();
+    //         }
 
-            currentDistanceInCentimeters = calculateAverage(recentDistances);
-        }
-    })
+    //         currentDistanceInCentimeters = calculateAverage(recentDistances);
+    //     }
+    // })
 
     //% block="Enternung zum Hindernis"
     //% group="Sensor"
     export function aktuelleEntfernungInZentimetern(): number {
-        return currentDistanceInCentimeters;
+        
+        const recentDistances: number[] = [];   
+        
+        for (let i = 0; i < 5; i++) {
+            recentDistances[i] = messureCurrentDistance();
+        }
+        
+        return calculateAverage(recentDistances);
+    }
+
+    //% block="Kompass-Ausrichtung"
+    //% group="Sensor"
+    export function aktuelleKompassausrichtung(): number {
+        
+        const recentAngles: number[] = [];   
+        
+        for (let i = 0; i < 5; i++) {
+            recentAngles[i] = input.compassHeading();
+        }
+        
+        return calculateAverage(recentAngles);
     }
 
     //% block="Motoren per Bluetooth steuern: $bluetoothUARTWerte"
@@ -170,33 +190,29 @@ namespace mecanumRobotV2 {
     //% group="Motor"
     export function folgeWeg(speed: number) {
 
-        control.inBackground(function() {
+        basic.forever(function () {
 
-            while (true) {
+            let currentForwardSpeed = 0;
 
-                basic.pause(20);
+            let distanceInCentimeters = aktuelleEntfernungInZentimetern();
+            let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
+    
+            if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
+                return;
+            }
 
-                let currentForwardSpeed = 0;
+            currentForwardSpeed = adjustedSpeed;
 
-                let distanceInCentimeters = aktuelleEntfernungInZentimetern();
-                let adjustedSpeed = ermittleGeschwindigkeit(speed, distanceInCentimeters);
-        
-                if (adjustedSpeed != 0 && currentForwardSpeed == adjustedSpeed) {
-                    return;
-                }
+            if (currentForwardSpeed > 0) {
+                motorenVorwärts(currentForwardSpeed);
+            } else {
+                motorenAnhalten();
 
-                currentForwardSpeed = adjustedSpeed;
+                currentForwardSpeed = 0;
 
-                if (currentForwardSpeed > 0) {
-                    motorenVorwärts(currentForwardSpeed);
-                } else {
-                    motorenAnhalten();
-
-                    currentForwardSpeed = 0;
-
-                    neuAusrichten();
-                }
-            }    
+                neuAusrichten();
+            }
+            
         });
     }
 
@@ -206,8 +222,8 @@ namespace mecanumRobotV2 {
         
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(currentCompassHeading - modifiedTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();
@@ -215,15 +231,15 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
-        const initialAngle = input.compassHeading();
+        const initialAngle = aktuelleKompassausrichtung();
 
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
 
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(currentCompassHeading - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();     
@@ -232,8 +248,8 @@ namespace mecanumRobotV2 {
 
         rechtsDrehen(rotationSpeed);
         
-        while (Math.abs(currentCompassHeading - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(50);
+        while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
+            basic.pause(20);
         }
 
         motorenAnhalten();
@@ -265,8 +281,6 @@ namespace mecanumRobotV2 {
         for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
             
             setServoAngle(servoAusschlag);
-
-            basic.pause(50);
 
             const entfernungZumHindernis = aktuelleEntfernungInZentimetern();
             
@@ -324,20 +338,17 @@ namespace mecanumRobotV2 {
             return Math.round(laufzeitInMilliseconds / 58);
         }
 
-        return null;
+        return 300;
     }
 
     function calculateAverage(values: number[]): number {
- 
-        if (values.length == 0) {
-            return 0;
-        }
  
         let sumOfValues = 0;
  
         values.forEach(function (value, idx) {
             sumOfValues += value;
         });
+
 
         return Math.round(sumOfValues / values.length);
     }
