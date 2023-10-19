@@ -230,6 +230,9 @@ namespace mecanumRobotV2 {
 
         const initialAngle = aktuelleKompassausrichtung();
 
+        basic.showNumber(initialAngle);
+        basic.pause(5000);
+
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
 
@@ -239,7 +242,8 @@ namespace mecanumRobotV2 {
 
         motorenAnhalten();     
 
-        basic.pause(2000);
+        basic.showNumber(aktuelleKompassausrichtung());
+        basic.pause(3000);
 
         const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
 
@@ -249,7 +253,8 @@ namespace mecanumRobotV2 {
 
         motorenAnhalten();
 
-        basic.pause(2000);
+        basic.showNumber(aktuelleKompassausrichtung());
+        basic.pause(3000);
 
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
