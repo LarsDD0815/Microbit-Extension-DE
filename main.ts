@@ -223,7 +223,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
-            // basic.pause(20);
+            basic.pause(100);
         }
 
         motorenAnhalten();
@@ -239,7 +239,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
-            // basic.pause(20);
+            basic.pause(100);
         }
 
         motorenAnhalten();     
@@ -249,7 +249,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
         
         while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
-            // basic.pause(20);
+            basic.pause(100);
         }
 
         motorenAnhalten();
