@@ -243,10 +243,11 @@ namespace mecanumRobotV2 {
             if (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
                 continue;
             }
+
+            motorenAnhalten();
+
             break;
         }
-
-        motorenAnhalten();
     }
 
     function ermittleNeueZielrichtung() {
@@ -262,10 +263,11 @@ namespace mecanumRobotV2 {
             if (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
                 continue;
             }
+
+            motorenAnhalten();
+
             break;
         }
-
-        motorenAnhalten();     
 
         const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
 
@@ -275,11 +277,12 @@ namespace mecanumRobotV2 {
             if (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
                 continue;
             }
+
+            motorenAnhalten();
+
             break;
         }
         
-        motorenAnhalten();
-
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
         if ((angleWithMaximumDistanceLeft.dinstance == undefined || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == undefined || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
