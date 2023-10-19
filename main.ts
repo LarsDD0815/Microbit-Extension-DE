@@ -4,7 +4,7 @@ namespace mecanumRobotV2 {
 
     const rotationSpeed = 2;
     const minDistanceInCentimeters = 15;
-    const targetAngleThreshold = 10;
+    const targetAngleThreshold = 5;
     const smoothingInvervallSize = 5;
 
     let recentDistances: number[] = [];    
@@ -102,7 +102,7 @@ namespace mecanumRobotV2 {
         
         const recentAngles: number[] = [];   
         
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             recentAngles[i] = input.compassHeading();
         }
         
@@ -223,7 +223,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            // basic.pause(20);
         }
 
         motorenAnhalten();
@@ -239,7 +239,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
 
         while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            // basic.pause(20);
         }
 
         motorenAnhalten();     
@@ -249,7 +249,7 @@ namespace mecanumRobotV2 {
         rechtsDrehen(rotationSpeed);
         
         while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(20);
+            // basic.pause(20);
         }
 
         motorenAnhalten();
