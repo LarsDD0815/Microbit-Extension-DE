@@ -231,8 +231,6 @@ namespace mecanumRobotV2 {
 
             break;
         }
-          
-
     }
 
     function neuAusrichten() {
@@ -241,46 +239,50 @@ namespace mecanumRobotV2 {
         
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {}
+        while (true) {
+            if (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
+                continue;
+            }
+            break;
+        }
 
         motorenAnhalten();
-
-        basic.pause(2000);
     }
 
     function ermittleNeueZielrichtung() {
 
         const initialAngle = aktuelleKompassausrichtung();
 
-        basic.showNumber(initialAngle);
-        basic.pause(5000);
-
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
 
-        linksDrehen(rotationSpeed);
+        rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {}
+        while (true) {
+            if (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
+                continue;
+            }
+            break;
+        }
 
         motorenAnhalten();     
 
-        basic.showNumber(aktuelleKompassausrichtung());
-        basic.pause(3000);
-
         const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
 
-        linksDrehen(rotationSpeed);
+        rechtsDrehen(rotationSpeed);
         
-        while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {}
-
+        while (true) {
+            if (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
+                continue;
+            }
+            break;
+        }
+        
         motorenAnhalten();
-
-        basic.showNumber(aktuelleKompassausrichtung());
-        basic.pause(3000);
 
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
-        if ((angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
+        if ((angleWithMaximumDistanceLeft.dinstance == undefined || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == undefined || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
             return adjustTargetAngle(initialAngle - 180);
         } else if (angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters){
             return angleWithMaximumDistanceRight.angle;
