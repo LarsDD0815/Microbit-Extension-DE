@@ -89,7 +89,7 @@ namespace mecanumRobotV2 {
         
         const recentDistances: number[] = [];   
         
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             recentDistances[i] = messureCurrentDistance();
         }
         
@@ -102,7 +102,7 @@ namespace mecanumRobotV2 {
         
         const recentAngles: number[] = [];   
         
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             recentAngles[i] = input.compassHeading();
         }
         
@@ -219,11 +219,11 @@ namespace mecanumRobotV2 {
         
         rechtsDrehen(rotationSpeed);
 
-        while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
-            basic.pause(100);
-        }
+        while (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {}
 
         motorenAnhalten();
+
+        basic.pause(2000);
     }
 
     function ermittleNeueZielrichtung() {
@@ -233,23 +233,23 @@ namespace mecanumRobotV2 {
         const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
         const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
 
-        rechtsDrehen(rotationSpeed);
+        linksDrehen(rotationSpeed);
 
-        while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
-            basic.pause(100);
-        }
+        while (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {}
 
         motorenAnhalten();     
 
+        basic.pause(2000);
+
         const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
 
-        rechtsDrehen(rotationSpeed);
+        linksDrehen(rotationSpeed);
         
-        while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
-            basic.pause(100);
-        }
+        while (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {}
 
         motorenAnhalten();
+
+        basic.pause(2000);
 
         const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
