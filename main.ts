@@ -225,7 +225,7 @@ namespace mecanumRobotV2 {
             const current = aktuelleKompassausrichtung();
 
             if (Math.abs(current - rightTargetAngle) > targetAngleThreshold) {
-                serial.writeLine("" + current);
+                serial.writeLine("" + current + "|" + rightTargetAngle);
                 continue;
             }
 
