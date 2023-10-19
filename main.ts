@@ -213,6 +213,28 @@ namespace mecanumRobotV2 {
   
     }
 
+    //% block="teste winkel"
+    //% group="Sensor"
+    export function testeWinkel() {
+
+        const initialAngle = aktuelleKompassausrichtung();
+
+        const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
+
+        while (true) {
+            const current = aktuelleKompassausrichtung();
+
+            if (Math.abs(current - rightTargetAngle) > targetAngleThreshold) {
+                serial.writeLine(aktuelleKompassausrichtung() )
+                continue;
+            }
+
+            break;
+        }
+          
+
+    }
+
     function neuAusrichten() {
 
         const modifiedTargetAngle = ermittleNeueZielrichtung();
