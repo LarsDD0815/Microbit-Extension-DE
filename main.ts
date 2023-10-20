@@ -102,8 +102,9 @@ namespace mecanumRobotV2 {
         
         const recentAngles: number[] = [];   
         
-        for (let i = 0; i < 2; i++) {
-            recentAngles[i] = input.compassHeading();
+        for (let i = 0; i < 10; i++) {
+            recentAngles[i] = input.compassHeading()
+            control.waitMicros(10)
         }
         
         return calculateAverage(recentAngles);
@@ -209,27 +210,6 @@ namespace mecanumRobotV2 {
             currentForwardSpeed = 0;
 
             neuAusrichten();
-        }
-  
-    }
-
-    //% block="teste winkel"
-    //% group="Sensor"
-    export function testeWinkel() {
-
-        const initialAngle = aktuelleKompassausrichtung();
-
-        const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
-
-        while (true) {
-            const current = aktuelleKompassausrichtung();
-
-            if (Math.abs(current - rightTargetAngle) > targetAngleThreshold) {
-                serial.writeLine("" + current + "|" + rightTargetAngle);
-                continue;
-            }
-
-            break;
         }
     }
 
