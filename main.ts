@@ -45,7 +45,7 @@ namespace mecanumRobotV2 {
     //% block="Servo stellen auf Winkel: $angle \\%"
     //% angle.min=-80 angle.max=80
     //% group="Servo"
-    export function setServoAngle(angle: number): void {
+    export function stelleServo(angle: number): void {
         pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
 
@@ -209,7 +209,7 @@ namespace mecanumRobotV2 {
 
         for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
 
-            setServoAngle(servoAusschlag)
+            stelleServo(servoAusschlag)
 
             let angleToDistanceMapping = new AngleToDistanceMapping(adjustTargetAngle(aktuelleKompasausrichtung + servoAusschlag), aktuelleEntfernungInZentimetern())
 
