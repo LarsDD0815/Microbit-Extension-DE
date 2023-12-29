@@ -102,9 +102,8 @@ namespace mecanumRobotV2 {
         
         const recentAngles: number[] = [];   
         
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 5; i++) {
             recentAngles[i] = input.compassHeading()
-            control.waitMicros(10)
         }
         
         return calculateAverage(recentAngles);
