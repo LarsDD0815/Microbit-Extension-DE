@@ -7,7 +7,7 @@ namespace mecanumRobotV2 {
     const targetAngleThreshold = 5;
     const smoothingInvervallSize = 5;
 
-    let recentDistances: number[] = [];    
+    let recentDistances: number[] = [];
     let recentOutlierDistances: number[] = [];
 
     let currentCompassHeading: number = 0;
@@ -17,7 +17,7 @@ namespace mecanumRobotV2 {
         Forward = 0,
         Backwards = 1
     }
-        
+
     enum LineTrackingSensor {
         //% block="links"
         Left,
@@ -25,7 +25,7 @@ namespace mecanumRobotV2 {
         Center,
         //% block="rechts"
         Right
-    
+
     }
 
     enum LED {
@@ -42,71 +42,32 @@ namespace mecanumRobotV2 {
         Off = 0
     }
 
-    // control.inBackground(function() {
-
-    //     while (true) {
-
-    //         basic.pause(20);
-
-    //         currentCompassHeading = input.compassHeading();
-
-    //         const currentDistance = messureCurrentDistance();
-    //         const currentAverageDistance = calculateAverage(recentDistances);
-
-    //         if (currentDistance == null) {
-    //             continue;
-    //         }
-
-    //         if (recentDistances.length == smoothingInvervallSize && Math.abs(currentDistance - currentAverageDistance) > currentAverageDistance * 3) {
-
-    //             const averageOutlierDistance = calculateAverage(recentOutlierDistances);
-    //             recentOutlierDistances.push(currentDistance);
-                
-    //             if (recentOutlierDistances.length == smoothingInvervallSize && Math.abs(currentDistance - averageOutlierDistance) < averageOutlierDistance * 1, 5) {
-                    
-    //                 recentOutlierDistances = [];
-    //                 recentDistances = recentOutlierDistances;
-    //             }
-
-    //             if (recentOutlierDistances.length > smoothingInvervallSize) {
-    //                 recentOutlierDistances.shift();
-    //             }
-    //         }
-
-    //         recentDistances.push(currentDistance);
-            
-    //         if (recentDistances.length > smoothingInvervallSize) {
-    //             recentDistances.shift();
-    //         }
-
-    //         currentDistanceInCentimeters = calculateAverage(recentDistances);
-    //     }
-    // })
-
     //% block="Enternung zum Hindernis"
     //% group="Sensor"
     export function aktuelleEntfernungInZentimetern(): number {
-        
-        const recentDistances: number[] = [];   
-        
+
+        const recentDistances: number[] = [];
+
         for (let i = 0; i < 3; i++) {
             recentDistances[i] = messureCurrentDistance();
+            basic.pause(10)
+
         }
-        
+
         return calculateAverage(recentDistances);
     }
 
     //% block="Kompass-Ausrichtung"
     //% group="Sensor"
     export function aktuelleKompassausrichtung(): number {
-        
-        const recentAngles: number[] = [];   
-        
+
+        const recentAngles: number[] = [];
+
         for (let i = 0; i < 5; i++) {
             recentAngles[i] = input.compassHeading()
             basic.pause(20)
         }
-        
+
         return calculateAverage(recentAngles);
     }
 
@@ -115,7 +76,7 @@ namespace mecanumRobotV2 {
     export function stelleMotorenPerBluetooth(bluetoothUARTWerte: String) {
 
         let rohdaten = bluetoothUARTWerte.split("|");
-        
+
         let motorVorneRechts = parseInt(rohdaten[0]);
         let motorVorneLinks = parseInt(rohdaten[1]);
         let motorHintenRechts = parseInt(rohdaten[2]);
@@ -133,7 +94,7 @@ namespace mecanumRobotV2 {
     //% speed.min=0 speed.max=100
     //% group="Motor"
     export function motorenVorwärts(speed: number) {
-          
+
         motorVorneLinks(TurnWheels.Forward, speed);
         motorVorneRechts(TurnWheels.Forward, speed);
         motorHintenLinks(TurnWheels.Forward, speed);
@@ -215,16 +176,19 @@ namespace mecanumRobotV2 {
 
     function neuAusrichten() {
 
-        const modifiedTargetAngle = ermittleNeueZielrichtung();
-        
-        rechtsDrehen(rotationSpeed);
+        const neueZielrichtung = ermittleNeueZielrichtung();
 
         while (true) {
-            if (Math.abs(aktuelleKompassausrichtung() - modifiedTargetAngle) > targetAngleThreshold) {
-                continue;
-            }
+
+            rechtsDrehen(rotationSpeed);
+
+            basic.pause(100)
 
             motorenAnhalten();
+
+            if (Math.abs(aktuelleKompassausrichtung() - neueZielrichtung) > targetAngleThreshold) {
+                continue;
+            }
 
             break;
         }
@@ -232,83 +196,41 @@ namespace mecanumRobotV2 {
 
     function ermittleNeueZielrichtung() {
 
-        const initialAngle = aktuelleKompassausrichtung();
+        const aktuelleKompasausrichtung = aktuelleKompassausrichtung();
 
-        const leftTargetAngle = adjustTargetAngle(initialAngle - 90);
-        const rightTargetAngle = adjustTargetAngle(initialAngle + 90);
+        let neueZielrichtung: AngleToDistanceMapping = null;
 
-        rechtsDrehen(rotationSpeed);
+        for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
 
-        while (true) {
-            if (Math.abs(aktuelleKompassausrichtung() - rightTargetAngle) > targetAngleThreshold) {
-                continue;
+            setServoAngle(servoAusschlag)
+
+            let angleToDistanceMapping = new AngleToDistanceMapping(adjustTargetAngle(aktuelleKompasausrichtung + servoAusschlag), aktuelleEntfernungInZentimetern())
+
+            if (neueZielrichtung.distance <= angleToDistanceMapping.distance && angleToDistanceMapping.distance >= minDistanceInCentimeters) {
+                neueZielrichtung = angleToDistanceMapping;
             }
-
-            motorenAnhalten();
-
-            break;
         }
 
-        const angleWithMaximumDistanceRight = determineAngleWithMaximumDistance(rightTargetAngle);
-
-        rechtsDrehen(rotationSpeed);
-        
-        while (true) {
-            if (Math.abs(aktuelleKompassausrichtung() - leftTargetAngle) > targetAngleThreshold) {
-                continue;
-            }
-
-            motorenAnhalten();
-
-            break;
+        if (neueZielrichtung != null) {
+            return neueZielrichtung.angle
         }
-        
-        const angleWithMaximumDistanceLeft = determineAngleWithMaximumDistance(leftTargetAngle);
 
-        if ((angleWithMaximumDistanceLeft.dinstance == undefined || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters) && (angleWithMaximumDistanceRight.dinstance == undefined || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters)) {
-            return adjustTargetAngle(initialAngle - 180);
-        } else if (angleWithMaximumDistanceLeft.dinstance == null || angleWithMaximumDistanceLeft.dinstance <= minDistanceInCentimeters){
-            return angleWithMaximumDistanceRight.angle;
-        } else if (angleWithMaximumDistanceRight.dinstance == null || angleWithMaximumDistanceRight.dinstance <= minDistanceInCentimeters) {
-            return angleWithMaximumDistanceLeft.angle;
-        } else {
-            return angleWithMaximumDistanceLeft.dinstance >= angleWithMaximumDistanceRight.dinstance ? angleWithMaximumDistanceLeft.angle : angleWithMaximumDistanceRight.angle;
-        }
+        return adjustTargetAngle(aktuelleKompasausrichtung + 180)
     }
 
     class AngleToDistanceMapping {
         angle: number;
-        dinstance: number;
-    }
+        distance: number;
 
-    function determineAngleWithMaximumDistance(initialAngle : number) : AngleToDistanceMapping {
-
-        const angleWithMaximumDistance = new AngleToDistanceMapping();
-
-        setServoAngle(0);
-
-        for (let servoAusschlag = -80; servoAusschlag <= 80; servoAusschlag += 2) {
-            
-            setServoAngle(servoAusschlag);
-
-            const entfernungZumHindernis = aktuelleEntfernungInZentimetern();
-            
-            if (entfernungZumHindernis <= angleWithMaximumDistance.dinstance) {
-                continue;
-            }
-               
-            angleWithMaximumDistance.dinstance = entfernungZumHindernis;
-            angleWithMaximumDistance.angle = adjustTargetAngle(initialAngle + servoAusschlag);
+        constructor(angle: number, distance: number) {
+            this.angle = angle;
+            this.distance = distance;
         }
-
-        setServoAngle(0);
-
-        return angleWithMaximumDistance;
     }
 
     function adjustTargetAngle(angle: number): number {
         let targetAngle = angle;
-        
+
         if (targetAngle > 360) {
             targetAngle -= 360;
         } else if (targetAngle < 0) {
@@ -318,7 +240,7 @@ namespace mecanumRobotV2 {
         return targetAngle;
     }
 
-    function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters : number) {
+    function ermittleGeschwindigkeit(targetSpeed: number, distanceInCentimeters: number) {
 
         if (distanceInCentimeters > 100) {
             return targetSpeed;
@@ -351,9 +273,9 @@ namespace mecanumRobotV2 {
     }
 
     function calculateAverage(values: number[]): number {
- 
+
         let sumOfValues = 0;
- 
+
         values.forEach(function (value, idx) {
             sumOfValues += value;
         });
@@ -406,8 +328,8 @@ namespace mecanumRobotV2 {
         }
     }
 
-    function stelleMotor(engineRegister1: number, engineRegister2: number, speed: number, distanceInCentimeters : number) {
-        
+    function stelleMotor(engineRegister1: number, engineRegister2: number, speed: number, distanceInCentimeters: number) {
+
         if (speed == 0) {
             setEngineSpeedValue(engineRegister1, 0);
             setEngineSpeedValue(engineRegister2, 0);
@@ -441,6 +363,4 @@ namespace mecanumRobotV2 {
         buf[1] = engineSpeedValue
         pins.i2cWriteBuffer(0x30, buf)
     }
-
-    setServoAngle(0);
 }
