@@ -42,6 +42,13 @@ namespace mecanumRobotV2 {
         Off = 0
     }
 
+    //% block="Servo stellen auf Winkel: $angle \\%"
+    //% angle.min=-80 angle.max=80
+    //% group="Servo"
+    export function setServoAngle(angle: number): void {
+        pins.servoWritePin(AnalogPin.P14, angle + 90)
+    }
+
     //% block="Enternung zum Hindernis"
     //% group="Sensor"
     export function aktuelleEntfernungInZentimetern(): number {
@@ -351,10 +358,6 @@ namespace mecanumRobotV2 {
         }
 
         return Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255));
-    }
-
-    function setServoAngle(angle: number): void {
-        pins.servoWritePin(AnalogPin.P14, angle + 90)
     }
 
     function setEngineSpeedValue(engineRegister: number, engineSpeedValue: number) {
