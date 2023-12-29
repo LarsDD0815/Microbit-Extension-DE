@@ -104,6 +104,7 @@ namespace mecanumRobotV2 {
         
         for (let i = 0; i < 5; i++) {
             recentAngles[i] = input.compassHeading()
+            basic.pause(20)
         }
         
         return calculateAverage(recentAngles);
