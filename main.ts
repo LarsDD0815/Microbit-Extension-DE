@@ -157,9 +157,9 @@ namespace Robotter {
         let wertRegister1 = 0;
         let wertRegister2 = 0;
         if (geschwindigkeit > 0) {
-            wertRegister2 == 0 ? 0 : Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255))
+            wertRegister2 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         } else if (geschwindigkeit < 0) {
-            wertRegister1 == 0 ? 0 : Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255))
+            wertRegister1 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         }      
 
         const buf = pins.createBuffer(4)
