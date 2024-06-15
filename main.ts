@@ -138,12 +138,15 @@ namespace Robotter {
 
     function aktuelisiereMotorbewegung(): void {
 
-        const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
+        serial.writeLine('test')
 
-        motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
-        motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
-        motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
-        motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
+
+        // const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
+
+        // motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
+        // motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
+        // motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
+        // motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
     }
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
@@ -153,21 +156,21 @@ namespace Robotter {
         let wertRegister1 = 0;
         let wertRegister2 = 0;
         if (geschwindigkeit > 0) {
-         //   wertRegister2 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
+            wertRegister2 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         } else if (geschwindigkeit < 0) {
-           // wertRegister1 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
+            wertRegister1 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         }
 
-        // const buf1 = pins.createBuffer(2)
-        // buf1[0] = rad.register1
-        // buf1[1] = wertRegister1
+        const buf1 = pins.createBuffer(2)
+        buf1[0] = rad.register1
+        buf1[1] = wertRegister1
 
-        // const buf2 = pins.createBuffer(2)
-        // buf2[0] = rad.register2
-        // buf2[1] = wertRegister2
+        const buf2 = pins.createBuffer(2)
+        buf2[0] = rad.register2
+        buf2[1] = wertRegister2
 
-        // pins.i2cWriteBuffer(0x30, buf1)
-        // pins.i2cWriteBuffer(0x30, buf2)
+        pins.i2cWriteBuffer(0x30, buf1)
+        pins.i2cWriteBuffer(0x30, buf2)
     }
 
     function ermittleMaximaleVorwaertsgeschwindigkeit(): number {
