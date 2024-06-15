@@ -149,7 +149,7 @@ namespace Robotter {
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
         
-        serial.writeValue('Rad: ', rad);
+        serial.writeValue('Rad: ', rad.zielgeschwindigkeit);
 
         let wertRegister1 = 0;
         let wertRegister2 = 0;
