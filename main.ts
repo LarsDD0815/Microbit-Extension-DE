@@ -2,11 +2,6 @@
 //% groups="['Räder', 'Entferungssensor', 'Servo', 'Kompass']"
 namespace Robotter {
 
-    basic.forever(() => {
-        aktuelisiereMotorbewegung()
-        basic.pause(20)
-    })
-
     class Rad {
 
         register1: number;
@@ -149,18 +144,20 @@ namespace Robotter {
         motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
         motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
         motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
-        motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))        
+        motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
     }
 
-    function motorSteuern(rad: Rad, geschwindigkeit: number): void  {
+    function motorSteuern(rad: Rad, geschwindigkeit: number): void {
         
+        serial.writeValue('Rad: ', rad);
+
         let wertRegister1 = 0;
         let wertRegister2 = 0;
         if (geschwindigkeit > 0) {
             wertRegister2 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         } else if (geschwindigkeit < 0) {
             wertRegister1 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
-        }      
+        }
 
         const buf = pins.createBuffer(4)
         buf[0] = wertRegister1
@@ -183,7 +180,7 @@ namespace Robotter {
         } else if (entferung < minimaleDistanz) {
             return 0;
         }
-         
+
         return Math.map(entferung, minimaleDistanz, 100, 1, maximaleGeschindigkkeit);
     }
 
@@ -235,4 +232,10 @@ namespace Robotter {
 
         return Math.round(sumOfValues / 5);
     }
+
+    basic.forever(() => {
+        aktuelisiereMotorbewegung()
+        basic.pause(20)
+    })
 }
+
