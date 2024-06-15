@@ -125,7 +125,6 @@ namespace Robotter {
         return entfernung;
     }
 
-
     //% block="Aktuelle Kompassausrichtung"
     //% group="Kompass"
     export function aktuelleKompassausrichtung(): number {
@@ -137,7 +136,7 @@ namespace Robotter {
         return ausrichtung;
     }
 
-    export function aktuelisiereMotorbewegung(): void {
+     function aktuelisiereMotorbewegung(): void {
 
         const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
 
@@ -233,5 +232,6 @@ namespace Robotter {
         return Math.round(sumOfValues / 5);
     }
 
+    control.inBackground(() => aktuelisiereMotorbewegung())
 }
 
