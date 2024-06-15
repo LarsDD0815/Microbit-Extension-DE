@@ -1,5 +1,4 @@
-
-//% color="#ff6800" icon="\uf1b9" weight=15
+//% color="#ff6800" icon="\uf1b9" weight=100
 //% groups="['Räder', 'Entferungssensor', 'Servo', 'Kompass']"
 namespace Robotter {
 
@@ -44,7 +43,7 @@ namespace Robotter {
     //% block="Vorwärts mit Geschwindigkeit: $geschwindigkeit \\%"
     //% group="Räder"
     //% geschwindigkeit.min=-0 geschwindigkeit.max=100
-    export const vorwaerts = (geschwindigkeit: number): void => {
+    export function vorwaerts(geschwindigkeit: number): void {
         VORNE_LINKS.vorwaerts(geschwindigkeit);
         VORNE_RECHTS.vorwaerts(geschwindigkeit);
         HINTEN_LINKS.vorwaerts(geschwindigkeit);
@@ -54,7 +53,7 @@ namespace Robotter {
     //% block="Rückwärts mit Geschwindigkeit: $geschwindigkeit \\%"
     //% group="Räder"
     //% geschwindigkeit.min=-0 geschwindigkeit.max=100
-    export const rueckwaerts = (geschwindigkeit: number): void => {
+    export function rueckwaerts(geschwindigkeit: number): void {
         VORNE_LINKS.rueckwaerts(geschwindigkeit);
         VORNE_RECHTS.rueckwaerts(geschwindigkeit);
         HINTEN_LINKS.rueckwaerts(geschwindigkeit);
@@ -64,7 +63,7 @@ namespace Robotter {
     //% block="Links drehen mit Geschwindigkeit: $geschwindigkeit \\%"
     //% group="Räder"
     //% geschwindigkeit.min=-0 geschwindigkeit.max=100
-    export const links = (geschwindigkeit: number): void => {
+    export function links(geschwindigkeit: number): void {
         VORNE_LINKS.rueckwaerts(geschwindigkeit);
         VORNE_RECHTS.vorwaerts(geschwindigkeit);
         HINTEN_LINKS.rueckwaerts(geschwindigkeit);
@@ -74,7 +73,7 @@ namespace Robotter {
     //% block="Rechts drehen mit Geschwindigkeit: $geschwindigkeit \\%"
     //% group="Räder"
     //% geschwindigkeit.min=-0 geschwindigkeit.max=100
-    export const rechts = (geschwindigkeit: number): void => {
+    export function rechts(geschwindigkeit: number): void {
         VORNE_LINKS.vorwaerts(geschwindigkeit);
         VORNE_RECHTS.rueckwaerts(geschwindigkeit);
         HINTEN_LINKS.vorwaerts(geschwindigkeit);
@@ -83,7 +82,7 @@ namespace Robotter {
 
     //% block="Anhalten"
     //% group="Räder"
-    export const stop = (): void => {
+    export function stop(): void {
         VORNE_LINKS.stop();
         VORNE_RECHTS.stop();
         HINTEN_LINKS.stop();
@@ -93,7 +92,7 @@ namespace Robotter {
     //% block="Servo stellen auf Winkel: $winkel \\%"
     //% group="Servo"
     //% winkel.min=-80 winkel.max=80
-    export const stelleServo = (winkel: number): void => {
+    export function stelleServo(winkel: number): void {
 
         const stellwinkel = winkel + 90
 
@@ -104,9 +103,9 @@ namespace Robotter {
 
     //% block="Aktuelle Entferung in cm"
     //% group="Entferungssensor"
-    export const aktuelleEntfernungInZentimetern = (): number => {
+    export function aktuelleEntfernungInZentimetern(): number {
 
-        const entfernung = calculateAverage(messureCurrentDistance);
+        const entfernung = durchschnitt(entferungMessen);
 
         serial.writeValue('Entfernung', entfernung);
 
@@ -118,14 +117,14 @@ namespace Robotter {
     //% group="Kompass"
     export function aktuelleKompassausrichtung(): number {
 
-        const ausrichtung = calculateAverage(() => input.compassHeading());
+        const ausrichtung = durchschnitt(() => input.compassHeading());
 
         serial.writeValue('Ausrichtung', ausrichtung);
 
         return ausrichtung;
     }
 
-    const messureCurrentDistance = (): number => {
+    function entferungMessen(): number {
 
         pins.setPull(DigitalPin.P15, PinPullMode.PullNone);
         pins.digitalWritePin(DigitalPin.P15, 0)
@@ -164,7 +163,7 @@ namespace Robotter {
         return Math.abs(zielwinkel - aktuellerWinklel) <= 10
     }
 
-    const calculateAverage = (valueComputeFunction: () => number): number => {
+    function durchschnitt(valueComputeFunction: () => number): number {
 
         let sumOfValues = 0;
         for (let i = 0; i < 5; i++) {
