@@ -4,7 +4,7 @@
 namespace Robotter {
 
     const calculateAverage = (valueComputeFunction: () => number): number => {
-        const values: number[] = [];
+        const values = [];
 
         for (let i = 0; i < 5; i++) {
             values[i] = valueComputeFunction();
