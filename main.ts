@@ -140,15 +140,12 @@ namespace Robotter {
     //% group="Räder"
     export function aktuelisiereMotorbewegung(): void {
 
-        serial.writeLine('test')
+        const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
 
-
-        // const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
-
-        // motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
-        // motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
-        // motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
-        // motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
+        motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
+        motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
+        motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
+        motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
     }
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
