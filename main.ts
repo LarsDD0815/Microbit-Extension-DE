@@ -136,7 +136,7 @@ namespace Robotter {
         return ausrichtung;
     }
 
-     function aktuelisiereMotorbewegung(): void {
+    function aktuelisiereMotorbewegung(): void {
 
         const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
 
@@ -153,22 +153,18 @@ namespace Robotter {
         let wertRegister1 = 0;
         let wertRegister2 = 0;
         if (geschwindigkeit > 0) {
-            wertRegister2 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
+            wertRegister2 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         } else if (geschwindigkeit < 0) {
-            wertRegister1 == 0 ? 0 : Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
+            wertRegister1 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         }
 
-        const buf1 = pins.createBuffer(2)
-        buf1[0] = wertRegister1
-        buf1[1] = rad.register1
-        
-        const buf2 = pins.createBuffer(2)        
-        buf2[0] = wertRegister2
-        buf2[1] = rad.register2
+        const buf = pins.createBuffer(4)
+        buf[0] = rad.register1
+        buf[1] = wertRegister1
+        buf[2] = rad.register2
+        buf[3] = wertRegister2
 
-        pins.i2cWriteBuffer(0x30, buf1)
-        pins.i2cWriteBuffer(0x30, buf2)
-
+        pins.i2cWriteBuffer(0x30, buf)
     }
 
     function ermittleMaximaleVorwaertsgeschwindigkeit(): number {
