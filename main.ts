@@ -120,7 +120,7 @@ namespace Robotter {
 
         const entfernung = durchschnitt(entferungMessen);
 
-        serial.writeValue('Entfernung', entfernung);
+        // serial.writeValue('Entfernung', entfernung);
 
         return entfernung;
     }
@@ -137,7 +137,7 @@ namespace Robotter {
         return ausrichtung;
     }
 
-    function aktuelisiereMotorbewegung(): void {
+    export function aktuelisiereMotorbewegung(): void {
 
         const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
 
@@ -148,7 +148,7 @@ namespace Robotter {
     }
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
-        
+
         serial.writeValue('Rad: ', rad.zielgeschwindigkeit);
 
         let wertRegister1 = 0;
@@ -233,9 +233,5 @@ namespace Robotter {
         return Math.round(sumOfValues / 5);
     }
 
-    basic.forever(() => {
-        aktuelisiereMotorbewegung()
-        basic.pause(20)
-    })
 }
 
