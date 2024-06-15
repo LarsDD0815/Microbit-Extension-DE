@@ -2,10 +2,16 @@
 //% groups="['Räder', 'Entferungssensor', 'Servo', 'Kompass']"
 namespace Robotter {
 
+    basic.forever(() => {
+        aktuelisiereMotorbewegung()
+        basic.pause(20)
+    })
+
     class Rad {
 
         register1: number;
         register2: number;
+        zielgeschwindigkeit: number = 0;
 
         constructor(register1: number, register2: number) {
             this.register1 = register1;
@@ -13,25 +19,21 @@ namespace Robotter {
         }
 
         vorwaerts(geschwindigkeit: number): void {
-            Rad.setEngineSpeedValue(this.register1, 0);
-            Rad.setEngineSpeedValue(this.register2, geschwindigkeit);
+            this.zielgeschwindigkeit = geschwindigkeit;
         }
 
         rueckwaerts(geschwindigkeit: number): void {
-            Rad.setEngineSpeedValue(this.register1, geschwindigkeit);
-            Rad.setEngineSpeedValue(this.register2, 0);
+            this.zielgeschwindigkeit = -geschwindigkeit;
+
         }
 
         stop(): void {
-            Rad.setEngineSpeedValue(this.register1, 0);
-            Rad.setEngineSpeedValue(this.register2, 0);
+            this.zielgeschwindigkeit = 0;
+
         }
 
-        static setEngineSpeedValue = (engineRegister: number, speed: number): void => {
-            let buf = pins.createBuffer(2)
-            buf[0] = engineRegister
-            buf[1] = speed == 0 ? 0 : Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255))
-            pins.i2cWriteBuffer(0x30, buf)
+        steuern(geschwindigkeit: number): void {
+            this.zielgeschwindigkeit = geschwindigkeit;
         }
     }
 
@@ -89,6 +91,22 @@ namespace Robotter {
         HINTEN_RECHTS.stop();
     }
 
+    //% block="Räder per Bluetooth steuern: $bluetoothUARTWerte"
+    //% group="Räder"
+    export function stelleMotorenPerBluetooth(bluetoothUARTWerte: String) {
+        const rohdaten = bluetoothUARTWerte.split("|");
+
+        const motorVorneRechts = parseInt(rohdaten[0]);
+        const motorVorneLinks = parseInt(rohdaten[1]);
+        const motorHintenRechts = parseInt(rohdaten[2]);
+        const motorHintenLinks = parseInt(rohdaten[3]);
+
+        VORNE_RECHTS.steuern(motorVorneRechts)
+        VORNE_LINKS.steuern(motorVorneLinks)
+        HINTEN_RECHTS.steuern(motorHintenRechts)
+        HINTEN_LINKS.steuern(motorHintenLinks)
+    }
+
     //% block="Servo stellen auf Winkel: $winkel \\%"
     //% group="Servo"
     //% winkel.min=-80 winkel.max=80
@@ -122,6 +140,51 @@ namespace Robotter {
         serial.writeValue('Ausrichtung', ausrichtung);
 
         return ausrichtung;
+    }
+
+    function aktuelisiereMotorbewegung(): void {
+
+        const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
+
+        motorSteuern(VORNE_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_LINKS.zielgeschwindigkeit))
+        motorSteuern(VORNE_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, VORNE_RECHTS.zielgeschwindigkeit))
+        motorSteuern(HINTEN_LINKS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_LINKS.zielgeschwindigkeit))
+        motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))        
+    }
+
+    function motorSteuern(rad: Rad, geschwindigkeit: number): void  {
+        
+        let wertRegister1 = 0;
+        let wertRegister2 = 0;
+        if (geschwindigkeit > 0) {
+            wertRegister2 == 0 ? 0 : Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255))
+        } else if (geschwindigkeit < 0) {
+            wertRegister1 == 0 ? 0 : Math.trunc(Math.map(Math.abs(speed), 1, 100, 32, 255))
+        }      
+
+        const buf = pins.createBuffer(4)
+        buf[0] = wertRegister1
+        buf[1] = rad.register1
+        buf[2] = wertRegiste2
+        buf[3] = rad.register2
+
+        pins.i2cWriteBuffer(0x30, buf)
+    }
+
+    function ermittleMaximaleVorwaertsgeschwindigkeit(): number {
+
+        const maximaleGeschindigkkeit = 30
+        const minimaleDistanz = 15
+
+        const entferung = aktuelleEntfernungInZentimetern();
+
+        if (entferung > 100) {
+            return maximaleGeschindigkkeit;
+        } else if (entferung < minimaleDistanz) {
+            return 0;
+        }
+         
+        return Math.map(entferung, minimaleDistanz, 100, 1, maximaleGeschindigkkeit);
     }
 
     function entferungMessen(): number {
