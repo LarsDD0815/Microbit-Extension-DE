@@ -4,16 +4,12 @@
 namespace Robotter {
 
     const calculateAverage = (valueComputeFunction: () => number): number => {
-        const values = [];
 
+        let sumOfValues = 0;
         for (let i = 0; i < 5; i++) {
-            values[i] = valueComputeFunction();
+            sumOfValues += valueComputeFunction();
         }
 
-        const sumOfValues = values.reduce(
-            (accumulator, currentValue) => accumulator + currentValue,
-            0)
-
-        return Math.round(sumOfValues / values.length);
+        return Math.round(sumOfValues / 5);
     }
 }
