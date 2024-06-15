@@ -136,7 +136,9 @@ namespace Robotter {
         return ausrichtung;
     }
 
-    function aktuelisiereMotorbewegung(): void {
+    //% block="Motorbewegung aktualisieren"
+    //% group="Räder"
+    export function aktuelisiereMotorbewegung(): void {
 
         serial.writeLine('test')
 
@@ -237,7 +239,5 @@ namespace Robotter {
 
         return Math.round(sumOfValues / 5);
     }
-
-    control.inBackground(() => aktuelisiereMotorbewegung())
 }
 
