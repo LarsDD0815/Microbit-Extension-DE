@@ -165,7 +165,7 @@ namespace Robotter {
         const buf = pins.createBuffer(4)
         buf[0] = wertRegister1
         buf[1] = rad.register1
-        buf[2] = wertRegiste2
+        buf[2] = wertRegister2
         buf[3] = rad.register2
 
         pins.i2cWriteBuffer(0x30, buf)
