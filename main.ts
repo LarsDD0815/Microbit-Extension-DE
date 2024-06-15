@@ -158,16 +158,16 @@ namespace Robotter {
             wertRegister1 = Math.trunc(Math.map(Math.abs(geschwindigkeit), 1, 100, 32, 255))
         }
 
-        const buf1 = pins.createBuffer(2)
-        buf1[0] = rad.register1
-        buf1[1] = wertRegister1
+        // const buf1 = pins.createBuffer(2)
+        // buf1[0] = rad.register1
+        // buf1[1] = wertRegister1
 
-        const buf2 = pins.createBuffer(2)
-        buf2[0] = rad.register2
-        buf2[1] = wertRegister2
+        // const buf2 = pins.createBuffer(2)
+        // buf2[0] = rad.register2
+        // buf2[1] = wertRegister2
 
-        pins.i2cWriteBuffer(0x30, buf1)
-        pins.i2cWriteBuffer(0x30, buf2)
+        // pins.i2cWriteBuffer(0x30, buf1)
+        // pins.i2cWriteBuffer(0x30, buf2)
     }
 
     function ermittleMaximaleVorwaertsgeschwindigkeit(): number {
