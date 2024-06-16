@@ -143,6 +143,25 @@ namespace Robotter {
         motorSteuern(HINTEN_RECHTS, Math.min(maximaleVorwaertsgeschwindigkeit, HINTEN_RECHTS.zielgeschwindigkeit))
     }
 
+    //% block="Fahrzeug drehen $delta"
+    //% group="Räder"
+    //% delta.min=-180 delta.max=180
+    export function dreheFahrzeug(delta: number): void {
+
+        const initialeKompasausrichtung = input.compassHeading();
+        const zielausrichtung = normalisiereWinkel(initialeKompasausrichtung + delta);
+
+        while (Math.abs(zielausrichtung - input.compassHeading()) > 5) {
+            if (delta > 0) {
+                rechts(5)
+            } else {
+                links(5)
+            }
+        }
+
+        stop()
+    }
+
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
 
         if (rad.aktuelleGescwindigkeit == geschwindigkeit) {
@@ -207,7 +226,7 @@ namespace Robotter {
     }
 
 
-    export function normalisiereWinkel(winkel: number): number {
+    function normalisiereWinkel(winkel: number): number {
 
         let zielwinkel = winkel;
 
