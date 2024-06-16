@@ -153,11 +153,11 @@ namespace Robotter {
 
         while (Math.abs(zielausrichtung - input.compassHeading()) > 5) {
             if (delta > 0) {
-                rechts(5)
+                rechts(1)
             } else {
-                links(5)
+                links(1)
             }
-            basic.pause(10)
+            basic.pause(100)
         }
 
         stop()
