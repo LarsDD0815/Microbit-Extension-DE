@@ -1,4 +1,4 @@
-//% color="#ff6800" icon="\uf1b9" weight=100
+//% color="#ff6800" icon="\uf1b9" weight=1
 //% groups="['Räder', 'Entferungssensor', 'Servo', 'Kompass']"
 namespace Robotter {
 
@@ -7,6 +7,7 @@ namespace Robotter {
         register1: number;
         register2: number;
         zielgeschwindigkeit: number = 0;
+        aktuelleGescwindigkeit: number = 0;
 
         constructor(register1: number, register2: number) {
             this.register1 = register1;
@@ -109,8 +110,6 @@ namespace Robotter {
 
         const stellwinkel = winkel + 90
 
-        console.log(`Servo: ${stellwinkel}`);
-
         pins.servoWritePin(AnalogPin.P14, stellwinkel)
     }
 
@@ -120,8 +119,6 @@ namespace Robotter {
 
         const entfernung = durchschnitt(entferungMessen);
 
-        // serial.writeValue('Entfernung', entfernung);
-
         return entfernung;
     }
 
@@ -130,8 +127,6 @@ namespace Robotter {
     export function aktuelleKompassausrichtung(): number {
 
         const ausrichtung = durchschnitt(() => input.compassHeading());
-
-        serial.writeValue('Ausrichtung', ausrichtung);
 
         return ausrichtung;
     }
@@ -150,7 +145,11 @@ namespace Robotter {
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
 
-        serial.writeValue('Rad: ', rad.zielgeschwindigkeit);
+        if (rad.aktuelleGescwindigkeit == geschwindigkeit) {
+            return;
+        }
+
+        rad.aktuelleGescwindigkeit = geschwindigkeit;
 
         let wertRegister1 = 0;
         let wertRegister2 = 0;
