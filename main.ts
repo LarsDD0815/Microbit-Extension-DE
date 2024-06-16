@@ -7,7 +7,7 @@ namespace Robotter {
         register1: number;
         register2: number;
         zielgeschwindigkeit: number = 0;
-        aktuelleGescwindigkeit: number = 0;
+        aktuelleGeschwindigkeit: number = 0;
 
         constructor(register1: number, register2: number) {
             this.register1 = register1;
@@ -133,7 +133,7 @@ namespace Robotter {
 
     //% block="Motorbewegung aktualisieren"
     //% group="Räder"
-    export function aktuelisiereMotorbewegung(): void {
+    export function aktualisiereMotorbewegung(): void {
 
         const maximaleVorwaertsgeschwindigkeit = ermittleMaximaleVorwaertsgeschwindigkeit();
 
@@ -145,11 +145,11 @@ namespace Robotter {
 
     function motorSteuern(rad: Rad, geschwindigkeit: number): void {
 
-        if (rad.aktuelleGescwindigkeit == geschwindigkeit) {
+        if (rad.aktuelleGeschwindigkeit == geschwindigkeit) {
             return;
         }
 
-        rad.aktuelleGescwindigkeit = geschwindigkeit;
+        rad.aktuelleGeschwindigkeit = geschwindigkeit;
 
         let wertRegister1 = 0;
         let wertRegister2 = 0;
