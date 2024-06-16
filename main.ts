@@ -157,6 +157,7 @@ namespace Robotter {
             } else {
                 links(5)
             }
+            basic.pause(10)
         }
 
         stop()
