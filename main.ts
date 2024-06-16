@@ -206,7 +206,8 @@ namespace Robotter {
         return 300;
     }
 
-    function normalisiereWinkel(winkel: number): number {
+
+    export function normalisiereWinkel(winkel: number): number {
 
         let zielwinkel = winkel;
 
@@ -217,13 +218,6 @@ namespace Robotter {
         }
 
         return zielwinkel;
-    }
-
-    function zielwinkelErreicht(zielwinkel: number): boolean {
-
-        const aktuellerWinklel = aktuelleKompassausrichtung()
-
-        return Math.abs(zielwinkel - aktuellerWinklel) <= 10
     }
 
     function durchschnitt(valueComputeFunction: () => number): number {
